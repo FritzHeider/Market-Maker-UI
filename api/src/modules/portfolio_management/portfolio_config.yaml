@@ -1,0 +1,8 @@
+portfolio_management:
+  enabled: true
+  update_frequency: 10  # Frequency of balance updates (in seconds)
+  track_open_positions: true  # Monitor active positions
+  max_asset_exposure_percent: 50  # Maximum % of total portfolio in one asset
+  pnl_calculation:
+    enabled: true
+    historical_window: 30  # Timeframe in days for PnL calculations

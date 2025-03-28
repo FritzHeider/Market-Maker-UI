@@ -1,0 +1,6 @@
+ccxt
+websockets
+pyyaml
+pandas
+requests
+loguru

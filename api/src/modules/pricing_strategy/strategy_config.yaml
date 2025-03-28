@@ -1,0 +1,29 @@
+# Default Pricing Strategy
+default_strategy: dynamic_spread
+
+# Market Making Strategies
+strategies:
+  fixed_spread:
+    enabled: true
+    spread_percent: 0.2  # Constant spread (0.2% above and below the market price)
+
+  dynamic_spread:
+    enabled: true
+    base_spread: 0.15  # Base spread %
+    volatility_factor: 0.05  # Adjust spread based on market volatility
+    max_spread: 0.5  # Cap spread at 0.5%
+
+  inventory_based:
+    enabled: false
+    risk_aversion: 0.5  # Adjust spread based on inventory levels
+    target_inventory_ratio: 0.3  # Maintain 30% of inventory balance in base asset
+
+  ai_driven:
+    enabled: false
+    model_name: "GPT-4"
+    optimization_target: "maximize liquidity while minimizing spread"
+
+  arbitrage:
+    enabled: true
+    min_profit_percent: 0.5  # Minimum profit threshold to execute arbitrage
+    max_execution_delay: 3  # Max seconds delay allowed before executing arbitrage trades

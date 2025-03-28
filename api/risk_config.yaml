@@ -1,0 +1,14 @@
+# Default Risk Settings
+risk_management:
+  enabled: true
+  max_order_size: 10  # Maximum order size in BTC
+  max_exposure: 50  # Maximum % of total portfolio exposure per trade
+  stop_loss_percent: 2  # Stop-loss threshold per trade (%)
+  max_slippage_percent: 0.5  # Maximum allowable slippage (%)
+  cooldown_time: 5  # Cooldown period in seconds between trades
+  alert_thresholds:
+    high_volatility: 5  # Alert if volatility exceeds 5%
+    low_liquidity: 5000  # Alert if order book depth is below $5000
+  notifications:
+    enabled: true
+    channels: ["email", "telegram"]  # Notify users when risk is breached

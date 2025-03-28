@@ -1,0 +1,72 @@
+# General Exchange Settings
+default_exchange: binance    # Set the primary exchange (can be overridden in CLI)
+default_symbol: BTC/USDT     # Default trading pair for all exchanges
+default_timeframe: 1h        # Timeframe for historical data (1m, 5m, 15m, 1h, 1d)
+default_order_type: limit    # Default order type (limit, market, stop-limit)
+default_trade_size: 0.01     # Default order size in BTC (can be percentage of balance)
+
+# Supported Exchanges
+exchanges:
+  binance:
+    enabled: true
+    api_url: "https://api.binance.com"
+    ws_url: "wss://stream.binance.com:9443/ws"
+    trading_fee: 0.1   # Maker/Taker fee percentage
+    withdrawal_fee: 
+      BTC: 0.0005
+      ETH: 0.005
+      USDT: 1
+    min_trade_size:
+      BTC/USDT: 0.001
+      ETH/USDT: 0.01
+    rate_limit: 1200    # API requests per minute
+    supported_pairs: ["BTC/USDT", "ETH/USDT", "BNB/USDT"]
+    order_types: ["market", "limit", "stop-limit"]
+
+  coinbase:
+    enabled: true
+    api_url: "https://api.pro.coinbase.com"
+    ws_url: "wss://ws-feed.pro.coinbase.com"
+    trading_fee: 0.5
+    withdrawal_fee:
+      BTC: 0.0003
+      ETH: 0.003
+      USDT: 1
+    min_trade_size:
+      BTC/USD: 0.0001
+      ETH/USD: 0.01
+    rate_limit: 600
+    supported_pairs: ["BTC/USD", "ETH/USD"]
+    order_types: ["market", "limit"]
+
+  kraken:
+    enabled: true
+    api_url: "https://api.kraken.com"
+    ws_url: "wss://ws.kraken.com"
+    trading_fee: 0.16
+    withdrawal_fee:
+      BTC: 0.0002
+      ETH: 0.001
+      USDT: 0.5
+    min_trade_size:
+      BTC/USD: 0.0002
+      ETH/USD: 0.01
+    rate_limit: 1000
+    supported_pairs: ["BTC/USD", "ETH/USD"]
+    order_types: ["market", "limit"]
+
+# Arbitrage Settings
+arbitrage:
+  enabled: true
+  min_profit_percent: 0.5  # Minimum % profit required to execute arbitrage trade
+  max_transfer_time: 10    # Maximum transfer delay allowed in minutes
+  fee_tracking: true       # Enables tracking of fees across exchanges
+  user_fee_sharing: true   # Allows sharing of user withdrawal/trading fees to improve fee calculations
+
+# Risk Management Settings
+risk_management:
+  max_order_size: 10       # Max order size in BTC (absolute value)
+  max_exposure: 50         # Max % of total portfolio exposure per trade
+  stop_loss_percent: 2     # Stop-loss threshold in % per trade
+  max_slippage_percent: 0.5 # Max allowed slippage per trade
+  cooldown_time: 5         # Cooldown period in seconds between trades

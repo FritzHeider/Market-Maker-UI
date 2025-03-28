@@ -1,0 +1,69 @@
+Cryptocurrency Exchanges
+Binance API
+Features: Market data, account management, order placement, futures trading.
+Docs: Binance API Documentation
+Coinbase Pro API
+Features: REST and WebSocket for real-time market data and trading.
+Docs: Coinbase API Documentation
+Kraken API
+Features: Spot, futures, staking, and WebSocket for live market feeds.
+Docs: Kraken API Documentation
+KuCoin API
+Features: REST and WebSocket for market data, trading, and account operations.
+Docs: KuCoin API Documentation
+Bitfinex API
+Features: REST, WebSocket, and market-making tools.
+Docs: Bitfinex API Documentation
+Bybit API
+Features: Derivatives, spot trading, and WebSocket support.
+Docs: Bybit API Documentation
+Stock Market APIs
+Interactive Brokers API
+Features: Access to stocks, options, futures, and forex data.
+Docs: Interactive Brokers API Docs
+Alpha Vantage API
+Features: Free access to stock, forex, and crypto market data.
+Docs: Alpha Vantage API Documentation
+Yahoo Finance API (Unofficial)
+Features: Historical stock data, market trends, and financial data.
+Docs: Third-party libraries like yfinance provide easy access.
+Polygon.io API
+Features: Real-time and historical data for stocks, forex, and crypto.
+Docs: Polygon.io API Documentation
+IEX Cloud API
+Features: Real-time market data, stock fundamentals, and news.
+Docs: IEX Cloud Documentation
+Forex Trading APIs
+OANDA API
+Features: Forex and CFD trading, real-time market data.
+Docs: OANDA API Documentation
+FXCM API
+Features: Forex trading, historical data, and live prices.
+Docs: FXCM API Documentation
+Forex.com API
+Features: Forex market data, account management.
+Docs: Forex.com API Documentation
+Derivatives and Futures
+Deribit API
+Features: Options and futures trading for cryptocurrency.
+Docs: Deribit API Documentation
+FTX API (FTX US/FTX International)
+Features: Futures, options, leveraged tokens.
+Docs: FTX API Documentation
+Multi-Exchange Aggregators
+CCXT (CryptoCurrency eXchange Trading Library)
+Features: Unified library for accessing multiple cryptocurrency exchanges.
+Docs: CCXT GitHub
+QuantConnect
+Features: Algorithmic trading platform supporting multiple asset classes.
+Docs: QuantConnect Documentation
+General Financial Market APIs
+Quandl API
+Features: Access to financial, economic, and alternative datasets.
+Docs: Quandl API Documentation
+TradingView API
+Features: Charting tools and market data for multiple asset classes.
+Docs: TradingView API Documentation
+Bloomberg Terminal API
+Features: Comprehensive market and financial data (premium).
+Docs: Bloomberg Terminal

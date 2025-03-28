@@ -1,0 +1,9 @@
+arbitrage:
+  enabled: true
+  min_profit_percent: 0.5       # Minimum required profit for arbitrage trades
+  max_transfer_time: 10         # Max delay for cross-exchange transfers (minutes)
+  fee_tracking: true            # Include trading and withdrawal fees in calculations
+  slippage_tolerance: 0.5       # Maximum slippage allowed (%)
+  retries: 3                    # Number of retry attempts for failed orders
+  trade_execution: true         # Enable automatic arbitrage execution
+  simulated_transfers: true     # Use simulated fund transfers for MVP

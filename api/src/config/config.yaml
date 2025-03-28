@@ -1,0 +1,5 @@
+# src/config/config.yaml
+default_exchange: binance
+default_symbol: BTC/USDT
+default_timeframe: 1h
+default_limit: 100
