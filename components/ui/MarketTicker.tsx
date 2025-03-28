@@ -1,22 +1,15 @@
-import React, { useEffect, useState } from 'react';
+"use client";
+import React, { useState } from "react";
+import { useWebSocket } from "@/lib/websocket";
 
 export default function MarketTicker() {
-  const [price, setPrice] = useState('0.00');
+  const [price, setPrice] = useState<string>("0.00");
 
-  useEffect(() => {
-    const fetchPrice = async () => {
-      try {
-        const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/market-data/binance');
-        const data = await res.json();
-        setPrice(parseFloat(data.last).toFixed(2));
-      } catch (e) {
-        console.error('Failed to fetch ticker data', e);
-      }
-    };
-    fetchPrice();
-    const interval = setInterval(fetchPrice, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  useWebSocket(`${process.env.NEXT_PUBLIC_API_URL?.replace("http", "ws")}/ws/ticker`, (data) => {
+    if (data && data.last) {
+      setPrice(parseFloat(data.last).toFixed(2));
+    }
+  });
 
   return (
     <div className="bg-black text-white p-4 rounded-xl shadow">
