@@ -10,6 +10,7 @@ import Footer from '../components/Footer'
 
 export default function Home() {
   return (
+    <>
    <Head>
         <title>Botsensai | Market Maker AI Bot</title>
         <meta
