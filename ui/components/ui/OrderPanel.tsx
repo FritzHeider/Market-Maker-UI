@@ -1,6 +1,25 @@
 import React from "react";
 import { placeOrder } from "@/lib/api";
 import type { Order } from "@/lib/types";
+import { useToast } from "@/components/ui/use-toast";
+
+export default function SomeComponent() {
+  const { toast } = useToast();
+
+  const handleClick = () => {
+    toast({
+      title: "Bot Deployed",
+      description: "Your strategy is now live on Binance.",
+      duration: 4000,
+    });
+  };
+
+  return (
+    <button onClick={handleClick} className="btn-primary">
+      Deploy Bot
+    </button>
+  );
+}
 
 export default function OrderPanel() {
   return (
