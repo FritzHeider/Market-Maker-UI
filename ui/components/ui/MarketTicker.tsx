@@ -5,11 +5,14 @@ import { useWebSocket } from "@/lib/websocket";
 export default function MarketTicker() {
   const [price, setPrice] = useState<string>("0.00");
 
-  useWebSocket(`${process.env.NEXT_PUBLIC_API_URL?.replace("http", "ws")}/ws/ticker`, (data) => {
-    if (data && data.last) {
-      setPrice(parseFloat(data.last).toFixed(2));
-    }
-  });
+  useWebSocket(
+    `${process.env.NEXT_PUBLIC_API_URL?.replace("http", "ws")}/ws/ticker`,
+    (data) => {
+      if (data && data.last) {
+        setPrice(parseFloat(data.last).toFixed(2));
+      }
+    },
+  );
 
   return (
     <div className="bg-black text-white p-4 rounded-xl shadow">

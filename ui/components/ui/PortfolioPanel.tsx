@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 export default function PortfolioPanel() {
   const [portfolio, setPortfolio] = useState({ balance: 0, pnl: 0 });
@@ -6,11 +6,11 @@ export default function PortfolioPanel() {
   useEffect(() => {
     const fetchPortfolio = async () => {
       try {
-        const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/portfolio');
+        const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/portfolio");
         const data = await res.json();
         setPortfolio(data);
       } catch (e) {
-        console.error('Failed to fetch portfolio', e);
+        console.error("Failed to fetch portfolio", e);
       }
     };
     fetchPortfolio();
@@ -25,8 +25,10 @@ export default function PortfolioPanel() {
       </div>
       <div className="flex justify-between">
         <span>PnL</span>
-        <span className={portfolio.pnl >= 0 ? 'text-green-400' : 'text-red-400'}>
-          {portfolio.pnl >= 0 ? '+' : ''}${portfolio.pnl.toFixed(2)}
+        <span
+          className={portfolio.pnl >= 0 ? "text-green-400" : "text-red-400"}
+        >
+          {portfolio.pnl >= 0 ? "+" : ""}${portfolio.pnl.toFixed(2)}
         </span>
       </div>
     </div>

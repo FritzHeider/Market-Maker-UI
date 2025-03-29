@@ -7,7 +7,8 @@ export default function Hero() {
           Trade Smarter, Trade Faster
         </h2>
         <p className="text-xl mb-8">
-          Leverage real-time data and AI-driven strategies to maximize your trading edge.
+          Leverage real-time data and AI-driven strategies to maximize your
+          trading edge.
         </p>
         <a
           href="/dashboard"
@@ -17,5 +18,5 @@ export default function Hero() {
         </a>
       </div>
     </section>
-  )
+  );
 }

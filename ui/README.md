@@ -18,14 +18,14 @@ Develop a full-stack market-making bot that supports:
 
 ## 🔧 Architecture
 
-| Layer       | Stack                                        |
-|-------------|----------------------------------------------|
-| Frontend    | Next.js, TailwindCSS, TypeScript, Chart.js   |
-| Backend     | FastAPI (Python), Redis, PostgreSQL          |
-| Hosting     | Vercel (frontend), Render or Railway (API)   |
-| Auth        | OAuth / Firebase / AWS Cognito               |
-| Realtime    | WebSockets, ccxt, REST APIs                  |
-| AI/ML       | TensorFlow / PyTorch + Backtrader            |
+| Layer    | Stack                                      |
+| -------- | ------------------------------------------ |
+| Frontend | Next.js, TailwindCSS, TypeScript, Chart.js |
+| Backend  | FastAPI (Python), Redis, PostgreSQL        |
+| Hosting  | Vercel (frontend), Render or Railway (API) |
+| Auth     | OAuth / Firebase / AWS Cognito             |
+| Realtime | WebSockets, ccxt, REST APIs                |
+| AI/ML    | TensorFlow / PyTorch + Backtrader          |
 
 ---
 
@@ -54,9 +54,9 @@ Develop a full-stack market-making bot that supports:
 
 ## 🌐 Environment Variables
 
-| Key                      | Description                             |
-|--------------------------|-----------------------------------------|
-| `NEXT_PUBLIC_API_URL`    | Backend URL for REST & WebSocket access |
+| Key                   | Description                             |
+| --------------------- | --------------------------------------- |
+| `NEXT_PUBLIC_API_URL` | Backend URL for REST & WebSocket access |
 
 Set these in `.env.local` and in Vercel Project → Settings → Environment Variables
 

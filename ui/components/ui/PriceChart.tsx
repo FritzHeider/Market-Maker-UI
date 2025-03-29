@@ -19,13 +19,15 @@ export default function PriceChart() {
   useEffect(() => {
     const fetchChart = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/historical-prices`);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/historical-prices`,
+        );
         if (!res.ok) throw new Error("Failed to fetch price data");
 
         const prices: PricePoint[] = await res.json();
 
         const labels = prices.map((p) =>
-          new Date(p.timestamp).toLocaleTimeString()
+          new Date(p.timestamp).toLocaleTimeString(),
         );
         const data = prices.map((p) => p.price);
 

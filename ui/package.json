@@ -4,7 +4,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "check-deps": "check-dependencies",
+    "format": "prettier --write .",
+    "prebuild": "npm run lint && npm run type-check",
+	"build": "next build",
+	"postbuild": "echo 'Build complete.'"
   },
   "dependencies": {
     "@shadcn/ui": "^0.0.4",
@@ -21,14 +26,16 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.17",
+    "@tsparticles/react": "^3.0.0",
     "@types/node": "22.13.14",
     "@types/react": "19.0.12",
     "@types/tailwindcss": "^3.0.11",
     "autoprefixer": "^10.4.21",
+    "check-dependencies": "^2.0.0",
+    "lottie-react": "^2.4.1",
     "postcss": "^8.5.3",
-    "tailwindcss": "^4.0.17",
-    "@tsparticles/react": "^3.0.0",
-    "lottie-react": "^2.4.1"
+    "prettier": "^3.5.3",
+    "tailwindcss": "^4.0.17"
   },
   "description": "",
   "main": "next.config.js",

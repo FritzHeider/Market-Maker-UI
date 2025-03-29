@@ -12,17 +12,19 @@ export default function Features() {
           <div className="bg-white p-6 rounded-lg shadow">
             <h4 className="text-xl font-bold mb-2">AI-Enhanced Strategies</h4>
             <p>
-              Utilize intelligent algorithms to refine your trading decisions and strategies.
+              Utilize intelligent algorithms to refine your trading decisions
+              and strategies.
             </p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow">
             <h4 className="text-xl font-bold mb-2">High-Frequency Trading</h4>
             <p>
-              Experience rapid order execution and take advantage of fleeting market opportunities.
+              Experience rapid order execution and take advantage of fleeting
+              market opportunities.
             </p>
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
