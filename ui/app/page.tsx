@@ -7,7 +7,7 @@ import {
   useTransform,
   useMotionValueEvent,
 } from "framer-motion";
-import { Player as LottiePlayer } from "@lottiefiles/react-lottie-player";
+import LottieWrapper from "@/components/ui/LottieWrapper";
 import Image from "next/image";
 import plans from "@/lib/plans";
 import Header from "@/app/components/Header";
@@ -179,12 +179,8 @@ export default function LandingPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.8 + index * 0.3, duration: 0.6 }}
                 >
-                  <LottiePlayer
-                    autoplay
-                    loop
-                    src={src}
-                    style={{ height: "180px", width: "180px" }}
-                  />
+                  <LottieWrapper src="/animations/Animation - 1743222346036.json" />
+
                 </motion.div>
               ))}
           </div>

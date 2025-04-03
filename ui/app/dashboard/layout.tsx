@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode, useState } from "react";
-import { Menu, UserCircle2, LogOut, Bell } from "lucide-react";
+import { Menu, UserCircle2, LogOut } from "lucide-react";
+import NotificationDropdown from "@/components/ui/NotificationDropdown";
 import { useSystemToast } from "@/components/ui/toaster";
 import { Toaster } from "sonner";
 
@@ -19,7 +20,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const currentYear = new Date().getFullYear();
 
-  useSystemToast();
+  useSystemToast(); // Initialize WebSocket-based notifications
 
   return (
     <div className="min-h-screen bg-gray-950 text-white flex flex-col md:grid md:grid-cols-[250px_1fr]">
@@ -71,9 +72,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <div className="md:hidden flex items-center justify-between px-4 py-3 bg-gray-900 border-b border-gray-800 sticky top-0 z-30">
         <h2 className="text-lg font-bold">Dashboard</h2>
         <div className="flex items-center gap-4">
-          <button aria-label="Notifications" className="hover:text-blue-400 transition">
-            <Bell className="w-5 h-5 text-gray-400" />
-          </button>
+          <NotificationDropdown /> {/* Optional: live bell dropdown */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             aria-label="Toggle Menu"
@@ -85,9 +84,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       </div>
 
       {/* Main Content */}
-      <main className="p-6 overflow-y-auto md:ml-0">{children}</main>
+      <main className="p-6 overflow-y-auto">{children}</main>
 
-      {/* Toasts */}
+      {/* Toast Container */}
       <Toaster position="top-right" richColors theme="dark" />
     </div>
   );

@@ -77,6 +77,9 @@ const request = async <T>({
 };
 
 // 🔁 Reusable Helpers
+export const placeOrder = async (payload: OrderPayload) => {
+  return await post<{ success: boolean; order?: Order }>("/orders", payload);
+};
 
 export const get = <T>(
   endpoint: string,
