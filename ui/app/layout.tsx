@@ -6,7 +6,7 @@ import { Inter } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import { ReactQueryProvider } from "@/lib/providers/react-query-provider";
-import { Toaster } from "@/components/ui/toaster"; // if using toast system
+import { Toaster } from "sonner"; // ✅ Correct source
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -29,7 +29,7 @@ export default function RootLayout({
       <body className="min-h-screen antialiased bg-gray-950 text-white">
         <ReactQueryProvider>
           {children}
-          <Toaster />
+          <Toaster position="top-right" richColors theme="dark" />
           <SpeedInsights />
           <Analytics />
         </ReactQueryProvider>

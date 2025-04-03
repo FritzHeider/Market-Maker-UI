@@ -21,9 +21,7 @@ export default function PriceChart() {
 
   const fetchChart = useCallback(async () => {
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/historical-prices`,
-      );
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/historical-prices`);
       if (!res.ok) throw new Error("Failed to fetch price data");
 
       const prices: PricePoint[] = await res.json();
@@ -32,7 +30,8 @@ export default function PriceChart() {
         new Date(p.timestamp).toLocaleTimeString("en-US", {
           hour: "2-digit",
           minute: "2-digit",
-        }),
+          second: "2-digit",
+        })
       );
       const data = prices.map((p) => p.price);
 
@@ -63,16 +62,9 @@ export default function PriceChart() {
   }, []);
 
   useEffect(() => {
-    let isMounted = true;
-    if (isMounted) {
-      fetchChart();
-    }
-
+    fetchChart();
     const interval = setInterval(fetchChart, 10000); // Refresh every 10s
-    return () => {
-      isMounted = false;
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, [fetchChart]);
 
   const options: ChartOptions<"line"> = {
@@ -95,12 +87,14 @@ export default function PriceChart() {
     },
   };
 
+  const hasData = chartData.datasets.length > 0 && chartData.labels?.length;
+
   return (
     <div className="bg-black text-white p-4 rounded-xl shadow-md w-full">
       <h2 className="text-lg font-semibold mb-4">📊 Price Chart (BTC/USDT)</h2>
 
       {error && <p className="text-red-400">{error}</p>}
-      {loading ? (
+      {loading || !hasData ? (
         <p className="text-gray-400">Loading chart...</p>
       ) : (
         <div className="h-64">
