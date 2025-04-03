@@ -1,5 +1,3 @@
-// File: /app/page.tsx
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -12,9 +10,7 @@ import {
 import { Player as LottiePlayer } from "@lottiefiles/react-lottie-player";
 import Image from "next/image";
 import plans from "@/lib/plans";
-import styles from "./LandingPage.module.css";
 import Header from "@/app/components/Header";
-// ❌ Removed unused imports
 import About from "@/components/About";
 import Features from "@/components/Features";
 import Footer from "@/components/Footer";
@@ -47,7 +43,7 @@ export default function LandingPage() {
       ([entry]) => {
         if (entry.isIntersecting) setShowLottie(true);
       },
-      { threshold: 0.2 },
+      { threshold: 0.2 }
     );
 
     const node = document.querySelector("#hero-animation");
@@ -60,7 +56,7 @@ export default function LandingPage() {
   }, []);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
-    if (latest > 80) setShowHeader(true); // ✅ fixed dangling expression
+    if (latest > 80) setShowHeader(true);
   });
 
   const scrollToPricing = () => {
@@ -121,14 +117,14 @@ export default function LandingPage() {
             alt="Floating green candlestick"
             width={24}
             height={24}
-            className={`absolute top-10 left-1/4 opacity-70 ${styles.floatingSlow}`}
+            className="absolute top-10 left-1/4 opacity-70 animate-[float_6s_ease-in-out_infinite]"
           />
           <Image
             src="/svg/candle-red.svg"
             alt="Floating red candlestick"
             width={32}
             height={32}
-            className={`absolute bottom-16 right-1/3 opacity-50 ${styles.floatingFast}`}
+            className="absolute bottom-16 right-1/3 opacity-50 animate-[float_4s_ease-in-out_infinite]"
           />
           {floatingCharts.map((src, i) => (
             <Image
@@ -139,7 +135,7 @@ export default function LandingPage() {
               height={i === 1 ? 120 : 80}
               className={`absolute opacity-10 ${
                 i % 2 === 0 ? "top-20 left-10" : "bottom-24 right-12"
-              } ${styles.floatingSlow}`}
+              } animate-[float_8s_ease-in-out_infinite]`}
             />
           ))}
         </div>
@@ -169,17 +165,14 @@ export default function LandingPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.5, duration: 0.5 }}
-            className={styles.ctaButton}
+            className="bg-blue-600 text-white font-semibold py-3 px-6 rounded-md hover:bg-blue-700 transition"
           >
             Explore Pricing
           </motion.button>
 
           <div id="hero-animation" className="flex gap-4 justify-center mt-12">
             {showLottie &&
-              [
-                "/animations/Animation - 1743222346036.json",
-                "/animations/Animation - 1743222346036.json",
-              ].map((src, index) => (
+              ["/animations/Animation - 1743222346036.json"].map((src, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 30 }}
@@ -219,7 +212,7 @@ export default function LandingPage() {
             {plans.map((plan, index) => (
               <motion.div
                 key={index}
-                className={styles.pricingCard}
+                className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md"
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{
@@ -240,7 +233,9 @@ export default function LandingPage() {
                     </li>
                   ))}
                 </ul>
-                <button className={styles.cardButton}>Get Started</button>
+                <button className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 transition">
+                  Get Started
+                </button>
               </motion.div>
             ))}
           </div>

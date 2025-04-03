@@ -1,5 +1,6 @@
-// File: /app/dashboard/page.tsx
+"use client";
 
+import { useSystemToast } from "@/components/ui/toaster";
 import MarketTicker from "@/components/ui/MarketTicker";
 import OrderPanel from "@/components/ui/OrderPanel";
 import PortfolioPanel from "@/components/ui/PortfolioPanel";
@@ -8,6 +9,8 @@ import PriceChart from "@/components/ui/PriceChart";
 import MetricsPanel from "@/components/ui/MetricsPanel";
 
 export default function Dashboard() {
+  useSystemToast(); // 🔔 Connects WebSocket-based toasts
+
   return (
     <main className="min-h-screen bg-gray-950 text-white p-6 space-y-12">
       {/* Dashboard Hero Card with Real-Time Metrics */}

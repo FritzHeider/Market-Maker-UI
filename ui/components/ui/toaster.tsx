@@ -1,8 +1,12 @@
-// File: /components/ui/toast.tsx
+"use client";
 
 import { useEffect } from "react";
 import { useToast as useShadToast } from "@/components/ui/use-toast";
 
+/**
+ * Hook: useSystemToast
+ * Connects to a WebSocket and shows toasts in real-time.
+ */
 export function useSystemToast() {
   const { toast } = useShadToast();
 
@@ -11,6 +15,7 @@ export function useSystemToast() {
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
+
       if (data.type === "notification") {
         toast({
           title: data.title || "Update",
@@ -20,10 +25,8 @@ export function useSystemToast() {
       }
     };
 
-    return () => ws.close();
+    return () => {
+      ws.close();
+    };
   }, [toast]);
 }
-
-// Usage in dashboard/page.tsx or layout:
-// const { toast } = useToast();
-// toast({ title: "Success", description: "Your bot has launched." });
