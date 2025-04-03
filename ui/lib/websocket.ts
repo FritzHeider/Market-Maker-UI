@@ -25,7 +25,14 @@ export const useWebSocket = <T = unknown>(
   const ws = useRef<WebSocket | null>(null);
   const reconnectTimer = useRef<NodeJS.Timeout | null>(null);
 
-  const { protocols, autoReconnect, reconnectInterval, onOpen, onClose, onError } = options ?? {};
+  const {
+    protocols,
+    autoReconnect,
+    reconnectInterval,
+    onOpen,
+    onClose,
+    onError,
+  } = options ?? {};
 
   useEffect(() => {
     let isMounted = true;
@@ -64,10 +71,21 @@ export const useWebSocket = <T = unknown>(
 
     return () => {
       isMounted = false;
-      reconnectTimer.current && clearTimeout(reconnectTimer.current);
+      if (reconnectTimer.current) {
+        clearTimeout(reconnectTimer.current);
+      }
       ws.current?.close();
     };
-  }, [url, protocols, autoReconnect, reconnectInterval, onMessage, onOpen, onClose, onError]);
+  }, [
+    url,
+    protocols,
+    autoReconnect,
+    reconnectInterval,
+    onMessage,
+    onOpen,
+    onClose,
+    onError,
+  ]);
 
   return ws;
 };

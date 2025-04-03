@@ -1,6 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
+import {
+  ChartData,
+  ChartOptions,
+  Chart as ChartJS,
+} from "chart.js";
 import "chart.js/auto";
 
 type PricePoint = {
@@ -9,7 +14,7 @@ type PricePoint = {
 };
 
 export default function PriceChart() {
-  const [chartData, setChartData] = useState<any>({
+  const [chartData, setChartData] = useState<ChartData<"line">>({
     labels: [],
     datasets: [],
   });
@@ -46,9 +51,10 @@ export default function PriceChart() {
           ],
         });
         setError(null);
-      } catch (err: any) {
-        console.error("Chart data fetch failed:", err.message);
-        setError("Error loading chart data.");
+      } catch (err: unknown) {
+        console.error("Chart data fetch failed:", err);
+        const message = err instanceof Error ? err.message : "Unknown error";
+        setError("Error loading chart data: " + message);
       }
     };
 
@@ -57,6 +63,26 @@ export default function PriceChart() {
     return () => clearInterval(interval);
   }, []);
 
+  const options: ChartOptions<"line"> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: {
+          color: "#fff",
+        },
+      },
+    },
+    scales: {
+      x: {
+        ticks: { color: "#aaa" },
+      },
+      y: {
+        ticks: { color: "#aaa" },
+      },
+    },
+  };
+
   return (
     <div className="bg-black text-white p-4 rounded-xl shadow-md w-full">
       <h2 className="text-lg font-semibold mb-4">📊 Price Chart (BTC/USDT)</h2>
@@ -64,29 +90,7 @@ export default function PriceChart() {
       {error ? (
         <p className="text-red-400">{error}</p>
       ) : (
-        <Line
-          data={chartData}
-          options={{
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                labels: {
-                  color: "#fff",
-                },
-              },
-            },
-            scales: {
-              x: {
-                ticks: { color: "#aaa" },
-              },
-              y: {
-                ticks: { color: "#aaa" },
-              },
-            },
-          }}
-          height={250}
-        />
+        <Line data={chartData} options={options} height={250} />
       )}
     </div>
   );
