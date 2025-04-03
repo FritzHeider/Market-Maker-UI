@@ -12,10 +12,12 @@
     "postbuild": "echo 'Build complete.'"
   },
   "dependencies": {
+    "@lottiefiles/react-lottie-player": "^3.6.0",
     "@shadcn/ui": "^0.0.4",
     "axios": "^1.8.4",
     "chart.js": "^4.4.8",
     "clsx": "^2.1.1",
+    "framer-motion": "^12.6.2",
     "next": "^15.2.4",
     "react": "^19.0.0",
     "react-chartjs-2": "^5.3.0",

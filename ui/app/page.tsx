@@ -1,5 +1,7 @@
 // File: /app/page.tsx
 
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 import { Player as LottiePlayer } from "@lottiefiles/react-lottie-player";
