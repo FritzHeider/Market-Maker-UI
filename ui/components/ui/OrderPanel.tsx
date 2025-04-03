@@ -12,13 +12,13 @@ export default function OrderPanel() {
   const [loading, setLoading] = useState<"buy" | "sell" | null>(null);
 
   const handleOrder = async (side: "buy" | "sell") => {
-    const amt = Number(amount);
-    const price = limitPrice ? Number(limitPrice) : undefined;
+    const amt = parseFloat(amount);
+    const price = limitPrice ? parseFloat(limitPrice) : undefined;
 
     if (!amount || isNaN(amt) || amt <= 0) {
       toast({
         title: "Invalid Amount",
-        description: "Please enter a valid number greater than 0.",
+        description: "Please enter a valid amount greater than 0.",
         variant: "destructive",
       });
       return;
@@ -31,31 +31,28 @@ export default function OrderPanel() {
         side,
         amount: amt,
         limitPrice: price,
-        symbol: "BTC/USDT", // ⬅️ Add your asset here
+        symbol: "BTC/USDT", // Update dynamically if needed
       };
 
       const result = await placeOrder(payload);
 
-      if (result.error) {
-        throw new Error(result.error);
-      }
+      if (result.error) throw new Error(result.error);
+      if (!result.data?.success) throw new Error("Unknown order error");
 
-      if (result.data?.success) {
-        toast({
-          title: "Order Placed",
-          description: `✅ ${side.toUpperCase()} order submitted for ${amt} ${payload.symbol}.`,
-        });
+      toast({
+        title: "Order Placed",
+        description: `✅ ${side.toUpperCase()} order for ${amt} ${payload.symbol} submitted.`,
+      });
 
-        // Reset form
-        setAmount("");
-        setLimitPrice("");
-      } else {
-        throw new Error("Unknown order response");
-      }
-    } catch (err: any) {
+      // Reset input fields
+      setAmount("");
+      setLimitPrice("");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Unexpected error occurred.";
       toast({
         title: "Order Failed",
-        description: err.message || "Something went wrong.",
+        description: message,
         variant: "destructive",
       });
     } finally {

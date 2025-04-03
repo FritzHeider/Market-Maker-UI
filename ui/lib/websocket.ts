@@ -4,17 +4,20 @@ type UseWebSocketOptions = {
   protocols?: string | string[];
   autoReconnect?: boolean;
   reconnectInterval?: number;
+  onOpen?: (ws: WebSocket) => void;
+  onClose?: () => void;
+  onError?: (error: unknown) => void;
 };
 
 /**
- * Custom WebSocket hook for streaming real-time data.
+ * Custom WebSocket hook with reconnect, lifecycle, and message parsing.
  *
- * @template T - Expected shape of incoming message data.
- * @param url - WebSocket server URL.
- * @param onMessage - Callback fired with parsed data.
- * @param options - Optional configs (protocols, autoReconnect, etc.).
+ * @template T - Type of expected message payload.
+ * @param url - WebSocket server URL
+ * @param onMessage - Message callback
+ * @param options - Optional WebSocket settings
  */
-export const useWebSocket = <T = any>(
+export const useWebSocket = <T = unknown>(
   url: string,
   onMessage: (data: T) => void,
   options?: UseWebSocketOptions
@@ -22,24 +25,37 @@ export const useWebSocket = <T = any>(
   const ws = useRef<WebSocket | null>(null);
   const reconnectTimer = useRef<NodeJS.Timeout | null>(null);
 
+  const { protocols, autoReconnect, reconnectInterval, onOpen, onClose, onError } = options ?? {};
+
   useEffect(() => {
     let isMounted = true;
 
     const connect = () => {
-      ws.current = new WebSocket(url, options?.protocols);
+      ws.current = new WebSocket(url, protocols);
+
+      ws.current.onopen = () => {
+        onOpen?.(ws.current as WebSocket);
+      };
 
       ws.current.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data) as T;
           onMessage(data);
-        } catch (err) {
-          console.warn("[WebSocket] Failed to parse message:", event.data);
+        } catch (err: unknown) {
+          console.warn("[WebSocket] Failed to parse:", event.data);
+          onError?.(err);
         }
       };
 
+      ws.current.onerror = (e) => {
+        onError?.(e);
+      };
+
       ws.current.onclose = () => {
-        if (isMounted && options?.autoReconnect) {
-          reconnectTimer.current = setTimeout(connect, options.reconnectInterval || 2000);
+        onClose?.();
+
+        if (isMounted && autoReconnect) {
+          reconnectTimer.current = setTimeout(connect, reconnectInterval || 2000);
         }
       };
     };
@@ -51,7 +67,7 @@ export const useWebSocket = <T = any>(
       reconnectTimer.current && clearTimeout(reconnectTimer.current);
       ws.current?.close();
     };
-  }, [url, onMessage]);
+  }, [url, protocols, autoReconnect, reconnectInterval, onMessage, onOpen, onClose, onError]);
 
   return ws;
 };

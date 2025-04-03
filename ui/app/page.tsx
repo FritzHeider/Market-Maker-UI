@@ -9,10 +9,9 @@ import Image from "next/image";
 import plans from "@/lib/plans";
 import styles from "./LandingPage.module.css";
 import Header from "@/app/components/Header";
-import Hero from "@/components/Hero";
+// ❌ Removed unused imports
 import About from "@/components/About";
 import Features from "@/components/Features";
-import Pricing from "@/components/Pricing";
 import Footer from "@/components/Footer";
 
 const floatingCharts = [
@@ -38,6 +37,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     const introTimer = setTimeout(() => setShowIntro(false), 2000);
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) setShowLottie(true);
@@ -47,14 +47,15 @@ export default function LandingPage() {
 
     const node = document.querySelector("#hero-animation");
     if (node) observer.observe(node);
+
     return () => {
       clearTimeout(introTimer);
-      node && observer.unobserve(node);
+      if (node) observer.unobserve(node);
     };
   }, []);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
-    setShowHeader(latest > 80);
+    if (latest > 80) setShowHeader(true); // ✅ fixed dangling expression
   });
 
   const scrollToPricing = () => {
