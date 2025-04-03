@@ -5,6 +5,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 import { Player as LottiePlayer } from "@lottiefiles/react-lottie-player";
+import Image from "next/image";
 import plans from "@/lib/plans";
 import styles from "./LandingPage.module.css";
 import Header from "@/app/components/Header";
@@ -21,15 +22,6 @@ const floatingCharts = [
 ];
 
 export default function LandingPage() {
-  return (
-    <main>
-      <Hero />
-      <Features />
-      <About />
-      <Pricing />
-      <Footer />
-    </main>
-  );
   const [showLottie, setShowLottie] = useState(false);
   const [showHeader, setShowHeader] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
@@ -118,16 +110,30 @@ export default function LandingPage() {
         </video>
 
         <div className="absolute inset-0 z-10 pointer-events-none">
-          <img src="/svg/candle-green.svg" className={`absolute top-10 left-1/4 w-6 opacity-70 ${styles.floatingSlow}`} alt="Floating green candlestick" />
-          <img src="/svg/candle-red.svg" className={`absolute bottom-16 right-1/3 w-8 opacity-50 ${styles.floatingFast}`} alt="Floating red candlestick" />
-
+          <Image
+            src="/svg/candle-green.svg"
+            alt="Floating green candlestick"
+            width={24}
+            height={24}
+            className={`absolute top-10 left-1/4 opacity-70 ${styles.floatingSlow}`}
+          />
+          <Image
+            src="/svg/candle-red.svg"
+            alt="Floating red candlestick"
+            width={32}
+            height={32}
+            className={`absolute bottom-16 right-1/3 opacity-50 ${styles.floatingFast}`}
+          />
           {floatingCharts.map((src, i) => (
-            <img
+            <Image
               key={src}
               src={src}
               alt={`Floating chart ${i + 1}`}
-              className={`absolute opacity-10 ${i % 2 === 0 ? 'top-20 left-10' : 'bottom-24 right-12'} ${styles.floatingSlow}`}
-              style={{ width: i === 1 ? "120px" : "80px" }}
+              width={i === 1 ? 120 : 80}
+              height={i === 1 ? 120 : 80}
+              className={`absolute opacity-10 ${
+                i % 2 === 0 ? "top-20 left-10" : "bottom-24 right-12"
+              } ${styles.floatingSlow}`}
             />
           ))}
         </div>
@@ -162,24 +168,24 @@ export default function LandingPage() {
           </motion.button>
 
           <div id="hero-animation" className="flex gap-4 justify-center mt-12">
-            {showLottie && [
-              "/animations/Animation - 1743222346036.json",
-              "/animations/Animation - 1743222346036.json"
-            ].map((src, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8 + index * 0.3, duration: 0.6 }}
-              >
-                <LottiePlayer
-                  autoplay
-                  loop
-                  src={src}
-                  style={{ height: "180px", width: "180px" }}
-                />
-              </motion.div>
-            ))}
+            {showLottie &&
+              ["/animations/Animation - 1743222346036.json", "/animations/Animation - 1743222346036.json"].map(
+                (src, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8 + index * 0.3, duration: 0.6 }}
+                  >
+                    <LottiePlayer
+                      autoplay
+                      loop
+                      src={src}
+                      style={{ height: "180px", width: "180px" }}
+                    />
+                  </motion.div>
+                )
+              )}
           </div>
         </div>
       </section>
@@ -220,6 +226,10 @@ export default function LandingPage() {
           </div>
         </motion.div>
       </section>
+
+      <Features />
+      <About />
+      <Footer />
     </main>
   );
 }
