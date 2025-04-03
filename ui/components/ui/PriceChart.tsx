@@ -1,11 +1,8 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
-import {
-  ChartData,
-  ChartOptions,
-  Chart as ChartJS,
-} from "chart.js";
+import { ChartData, ChartOptions } from "chart.js";
 import "chart.js/auto";
 
 type PricePoint = {
@@ -25,14 +22,14 @@ export default function PriceChart() {
     const fetchChart = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/historical-prices`,
+          `${process.env.NEXT_PUBLIC_API_URL}/historical-prices`
         );
         if (!res.ok) throw new Error("Failed to fetch price data");
 
         const prices: PricePoint[] = await res.json();
 
         const labels = prices.map((p) =>
-          new Date(p.timestamp).toLocaleTimeString(),
+          new Date(p.timestamp).toLocaleTimeString()
         );
         const data = prices.map((p) => p.price);
 
@@ -50,16 +47,18 @@ export default function PriceChart() {
             },
           ],
         });
+
         setError(null);
       } catch (err: unknown) {
-        console.error("Chart data fetch failed:", err);
-        const message = err instanceof Error ? err.message : "Unknown error";
+        const message =
+          err instanceof Error ? err.message : "Unknown error occurred";
+        console.error("Chart data fetch failed:", message);
         setError("Error loading chart data: " + message);
       }
     };
 
     fetchChart();
-    const interval = setInterval(fetchChart, 10000); // refresh every 10s
+    const interval = setInterval(fetchChart, 10000); // Refresh every 10s
     return () => clearInterval(interval);
   }, []);
 
@@ -85,12 +84,16 @@ export default function PriceChart() {
 
   return (
     <div className="bg-black text-white p-4 rounded-xl shadow-md w-full">
-      <h2 className="text-lg font-semibold mb-4">📊 Price Chart (BTC/USDT)</h2>
+      <h2 className="text-lg font-semibold mb-4">
+        📊 Price Chart (BTC/USDT)
+      </h2>
 
       {error ? (
         <p className="text-red-400">{error}</p>
       ) : (
-        <Line data={chartData} options={options} height={250} />
+        <div className="h-64">
+          <Line data={chartData} options={options} />
+        </div>
       )}
     </div>
   );
