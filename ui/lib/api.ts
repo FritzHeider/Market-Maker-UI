@@ -1,4 +1,5 @@
-// Extend ApiResponse type if not already exported
+// File: /lib/api.ts
+
 export type ApiResponse<T> = {
   data?: T;
   error?: string;
@@ -37,80 +38,76 @@ const handleError = (err: unknown): ApiResponse<never> => {
   return { error: "Unexpected error occurred" };
 };
 
-// 🔁 Reusable Request Helpers
+type RequestMethod = "GET" | "POST" | "PUT" | "DELETE";
 
-export const get = async <T>(
-  endpoint: string,
+interface RequestOptions {
+  method: RequestMethod;
+  endpoint: string;
+  payload?: unknown;
+  timeout?: number;
+  headers?: Record<string, string>;
+  baseUrl?: string;
+}
+
+const request = async <T>({
+  method,
+  endpoint,
+  payload,
   timeout = DEFAULT_TIMEOUT,
+  headers = {},
   baseUrl = process.env.NEXT_PUBLIC_API_URL,
-): Promise<ApiResponse<T>> => {
+}: RequestOptions): Promise<ApiResponse<T>> => {
   const controller = withTimeout(timeout);
+
   try {
     const res = await fetch(`${baseUrl}${endpoint}`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        ...headers,
+      },
       signal: controller.signal,
+      body: ["POST", "PUT"].includes(method) ? JSON.stringify(payload) : undefined,
     });
+
     return await handleResponse<T>(res);
   } catch (err) {
     return handleError(err);
   }
 };
 
-export const post = async <T>(
+// 🔁 Reusable Helpers
+
+export const get = <T>(
+  endpoint: string,
+  timeout?: number,
+  baseUrl?: string,
+  headers?: Record<string, string>
+) =>
+  request<T>({ method: "GET", endpoint, timeout, baseUrl, headers });
+
+export const post = <T>(
   endpoint: string,
   payload: unknown,
-  timeout = DEFAULT_TIMEOUT,
-  baseUrl = process.env.NEXT_PUBLIC_API_URL,
-): Promise<ApiResponse<T>> => {
-  const controller = withTimeout(timeout);
-  try {
-    const res = await fetch(`${baseUrl}${endpoint}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-      signal: controller.signal,
-    });
-    return await handleResponse<T>(res);
-  } catch (err) {
-    return handleError(err);
-  }
-};
+  timeout?: number,
+  baseUrl?: string,
+  headers?: Record<string, string>
+) =>
+  request<T>({ method: "POST", endpoint, payload, timeout, baseUrl, headers });
 
-export const put = async <T>(
+export const put = <T>(
   endpoint: string,
   payload: unknown,
-  timeout = DEFAULT_TIMEOUT,
-  baseUrl = process.env.NEXT_PUBLIC_API_URL,
-): Promise<ApiResponse<T>> => {
-  const controller = withTimeout(timeout);
-  try {
-    const res = await fetch(`${baseUrl}${endpoint}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-      signal: controller.signal,
-    });
-    return await handleResponse<T>(res);
-  } catch (err) {
-    return handleError(err);
-  }
-};
+  timeout?: number,
+  baseUrl?: string,
+  headers?: Record<string, string>
+) =>
+  request<T>({ method: "PUT", endpoint, payload, timeout, baseUrl, headers });
 
-export const del = async <T>(
+export const del = <T>(
   endpoint: string,
-  timeout = DEFAULT_TIMEOUT,
-  baseUrl = process.env.NEXT_PUBLIC_API_URL,
-): Promise<ApiResponse<T>> => {
-  const controller = withTimeout(timeout);
-  try {
-    const res = await fetch(`${baseUrl}${endpoint}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      signal: controller.signal,
-    });
-    return await handleResponse<T>(res);
-  } catch (err) {
-    return handleError(err);
-  }
-};
+  timeout?: number,
+  baseUrl?: string,
+  headers?: Record<string, string>
+) =>
+  request<T>({ method: "DELETE", endpoint, timeout, baseUrl, headers });
