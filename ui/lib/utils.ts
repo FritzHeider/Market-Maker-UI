@@ -5,7 +5,7 @@
 export const formatCurrency = (
   value: number,
   currency: string = "USD",
-  locale: string = "en-US"
+  locale: string = "en-US",
 ): string => {
   return new Intl.NumberFormat(locale, {
     style: "currency",
@@ -22,7 +22,7 @@ export const formatCurrency = (
 export const timeAgo = (
   timestamp: string,
   locale: string = "en-US",
-  style: Intl.RelativeTimeFormatStyle = "short"
+  style: Intl.RelativeTimeFormatStyle = "short",
 ): string => {
   const then = new Date(timestamp).getTime();
   const now = Date.now();

@@ -20,7 +20,7 @@ type UseWebSocketOptions = {
 export const useWebSocket = <T = unknown>(
   url: string,
   onMessage: (data: T) => void,
-  options?: UseWebSocketOptions
+  options?: UseWebSocketOptions,
 ) => {
   const ws = useRef<WebSocket | null>(null);
   const reconnectTimer = useRef<NodeJS.Timeout | null>(null);
@@ -62,7 +62,10 @@ export const useWebSocket = <T = unknown>(
         onClose?.();
 
         if (isMounted && autoReconnect) {
-          reconnectTimer.current = setTimeout(connect, reconnectInterval || 2000);
+          reconnectTimer.current = setTimeout(
+            connect,
+            reconnectInterval || 2000,
+          );
         }
       };
     };

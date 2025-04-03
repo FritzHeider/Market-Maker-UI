@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { Menu, UserCircle2, LogOut, Bell } from "lucide-react";
 import { useSystemToast } from "@/components/ui/toast";
 
-
 const navLinks = [
   { href: "/dashboard", label: "Overview" },
   { href: "/dashboard/orders", label: "Orders" },
@@ -22,7 +21,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-gray-950 text-white flex flex-col md:grid md:grid-cols-[250px_1fr]">
       {/* Sidebar */}
-      <aside className={`fixed md:static z-40 bg-gray-900 border-r border-gray-800 p-6 h-full md:h-auto transform transition-transform duration-300 ease-in-out ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
+      <aside
+        className={`fixed md:static z-40 bg-gray-900 border-r border-gray-800 p-6 h-full md:h-auto transform transition-transform duration-300 ease-in-out ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
+      >
         <h2 className="text-xl font-bold mb-6">Botsensai</h2>
         <nav className="flex flex-col gap-4 text-sm">
           {navLinks.map((link) => (
@@ -37,13 +38,21 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           ))}
         </nav>
         <div className="mt-auto flex flex-col gap-4 text-sm text-gray-400 border-t border-gray-800 pt-4">
-          <Link href="/profile" className="flex items-center gap-2 hover:text-blue-400">
+          <Link
+            href="/profile"
+            className="flex items-center gap-2 hover:text-blue-400"
+          >
             <UserCircle2 className="w-4 h-4" /> Profile
           </Link>
-          <Link href="/logout" className="flex items-center gap-2 hover:text-red-400">
+          <Link
+            href="/logout"
+            className="flex items-center gap-2 hover:text-red-400"
+          >
             <LogOut className="w-4 h-4" /> Logout
           </Link>
-          <div className="text-xs text-gray-500 mt-4">© {new Date().getFullYear()} Botsensai</div>
+          <div className="text-xs text-gray-500 mt-4">
+            © {new Date().getFullYear()} Botsensai
+          </div>
         </div>
       </aside>
 
@@ -54,16 +63,17 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <button aria-label="Notifications">
             <Bell className="w-5 h-5 text-gray-400 hover:text-blue-400" />
           </button>
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Toggle Menu">
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            aria-label="Toggle Menu"
+          >
             <Menu className="w-6 h-6" />
           </button>
         </div>
       </div>
 
       {/* Main content */}
-      <main className="p-6 overflow-y-auto md:ml-0">
-        {children}
-      </main>
+      <main className="p-6 overflow-y-auto md:ml-0">{children}</main>
     </div>
   );
 }

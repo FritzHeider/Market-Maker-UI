@@ -18,7 +18,8 @@
 /* === Animation Keyframes === */
 
 @keyframes floatSlow {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -27,7 +28,8 @@
 }
 
 @keyframes floatFast {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {

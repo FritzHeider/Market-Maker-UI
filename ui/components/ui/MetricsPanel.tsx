@@ -14,7 +14,13 @@ import {
   Tooltip,
 } from "chart.js";
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+);
 
 interface Metrics {
   portfolioValue: number;
@@ -37,16 +43,18 @@ export default function MetricsPanel() {
       const newMetrics = lastJsonMessage.dashboardMetrics as Metrics;
       setMetrics(newMetrics);
       setPnlClass(
-        newMetrics.pnl24h > 0 ? "from-green-700 to-green-500" : newMetrics.pnl24h < 0 ? "from-red-700 to-red-500" : "from-blue-800 to-blue-600"
+        newMetrics.pnl24h > 0
+          ? "from-green-700 to-green-500"
+          : newMetrics.pnl24h < 0
+            ? "from-red-700 to-red-500"
+            : "from-blue-800 to-blue-600",
       );
       setHistory((prev) => [...prev.slice(-29), newMetrics.pnl24h]);
     }
   }, [lastJsonMessage]);
 
   if (!metrics) {
-    return (
-      <div className="text-blue-100 text-sm">Loading metrics...</div>
-    );
+    return <div className="text-blue-100 text-sm">Loading metrics...</div>;
   }
 
   return (
@@ -59,16 +67,35 @@ export default function MetricsPanel() {
         transition={{ duration: 0.5 }}
         className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 bg-gradient-to-br ${pnlClass} p-4 rounded-xl shadow-inner`}
       >
-        <MetricBox label="Total Portfolio Value" value={metrics.portfolioValue} prefix="$" icon={<TrendingUp className="w-5 h-5 text-blue-300" />} />
-        <MetricBox label="Open Orders" value={metrics.openOrders} icon={<Activity className="w-5 h-5 text-blue-300" />} />
-        <MetricBox label="Active Strategies" value={metrics.activeStrategies} icon={<TrendingUp className="w-5 h-5 text-blue-300" />} />
+        <MetricBox
+          label="Total Portfolio Value"
+          value={metrics.portfolioValue}
+          prefix="$"
+          icon={<TrendingUp className="w-5 h-5 text-blue-300" />}
+        />
+        <MetricBox
+          label="Open Orders"
+          value={metrics.openOrders}
+          icon={<Activity className="w-5 h-5 text-blue-300" />}
+        />
+        <MetricBox
+          label="Active Strategies"
+          value={metrics.activeStrategies}
+          icon={<TrendingUp className="w-5 h-5 text-blue-300" />}
+        />
         <MetricBox
           label="24h PnL"
           value={metrics.pnl24h}
           suffix="%"
           isPnl
           highlight={metrics.pnl24h >= 0 ? "text-green-300" : "text-red-400"}
-          icon={metrics.pnl24h >= 0 ? <TrendingUp className="w-5 h-5" /> : <TrendingDown className="w-5 h-5" />}
+          icon={
+            metrics.pnl24h >= 0 ? (
+              <TrendingUp className="w-5 h-5" />
+            ) : (
+              <TrendingDown className="w-5 h-5" />
+            )
+          }
           history={history}
         />
       </motion.div>
@@ -76,7 +103,16 @@ export default function MetricsPanel() {
   );
 }
 
-function MetricBox({ label, value, prefix = "", suffix = "", highlight = "text-white", isPnl = false, icon, history = [] }: {
+function MetricBox({
+  label,
+  value,
+  prefix = "",
+  suffix = "",
+  highlight = "text-white",
+  isPnl = false,
+  icon,
+  history = [],
+}: {
   label: string;
   value: number;
   prefix?: string;
@@ -129,7 +165,9 @@ function MetricBox({ label, value, prefix = "", suffix = "", highlight = "text-w
       <p className="text-sm text-blue-200 flex items-center justify-center gap-2">
         {icon} <span>{label}</span>
       </p>
-      <p className={`text-2xl font-bold ${highlight}`}>{`${prefix}${displayValue.toFixed(isPnl ? 2 : 0)}${suffix}`}</p>
+      <p
+        className={`text-2xl font-bold ${highlight}`}
+      >{`${prefix}${displayValue.toFixed(isPnl ? 2 : 0)}${suffix}`}</p>
       {history.length > 2 && (
         <div className="mt-1 h-12">
           <Line data={chartData} options={chartOptions} />

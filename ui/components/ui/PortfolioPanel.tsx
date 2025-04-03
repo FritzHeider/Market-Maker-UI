@@ -32,11 +32,8 @@ export default function PortfolioPanel() {
           </div>
           <div className="flex justify-between">
             <span>PnL</span>
-            <span
-              className={data.pnl >= 0 ? "text-green-400" : "text-red-400"}
-            >
-              {data.pnl >= 0 ? "+" : ""}
-              ${data.pnl.toFixed(2)}
+            <span className={data.pnl >= 0 ? "text-green-400" : "text-red-400"}>
+              {data.pnl >= 0 ? "+" : ""}${data.pnl.toFixed(2)}
             </span>
           </div>
         </>

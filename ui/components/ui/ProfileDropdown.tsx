@@ -16,17 +16,26 @@ export default function ProfileDropdown() {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-40 bg-gray-800 border border-gray-700 text-sm">
         <DropdownMenuItem asChild>
-          <a href="/profile" className="flex items-center gap-2 px-2 py-1.5 text-white hover:bg-gray-700">
+          <a
+            href="/profile"
+            className="flex items-center gap-2 px-2 py-1.5 text-white hover:bg-gray-700"
+          >
             <UserCircle2 className="w-4 h-4" /> Profile
           </a>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <a href="/settings" className="flex items-center gap-2 px-2 py-1.5 text-white hover:bg-gray-700">
+          <a
+            href="/settings"
+            className="flex items-center gap-2 px-2 py-1.5 text-white hover:bg-gray-700"
+          >
             <Settings className="w-4 h-4" /> Settings
           </a>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <a href="/logout" className="flex items-center gap-2 px-2 py-1.5 text-red-400 hover:bg-gray-700">
+          <a
+            href="/logout"
+            className="flex items-center gap-2 px-2 py-1.5 text-red-400 hover:bg-gray-700"
+          >
             <LogOut className="w-4 h-4" /> Logout
           </a>
         </DropdownMenuItem>

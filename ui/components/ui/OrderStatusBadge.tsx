@@ -15,7 +15,7 @@ export default function OrderStatusBadge({ status }: { status: OrderStatus }) {
     <span
       className={clsx(
         "text-xs px-2 py-0.5 rounded-full font-medium text-white uppercase tracking-wide",
-        color
+        color,
       )}
     >
       {status}

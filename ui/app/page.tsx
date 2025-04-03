@@ -3,7 +3,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useMotionValueEvent,
+} from "framer-motion";
 import { Player as LottiePlayer } from "@lottiefiles/react-lottie-player";
 import Image from "next/image";
 import plans from "@/lib/plans";
@@ -42,7 +47,7 @@ export default function LandingPage() {
       ([entry]) => {
         if (entry.isIntersecting) setShowLottie(true);
       },
-      { threshold: 0.2 }
+      { threshold: 0.2 },
     );
 
     const node = document.querySelector("#hero-animation");
@@ -155,7 +160,8 @@ export default function LandingPage() {
             transition={{ delay: 0.3, duration: 0.8 }}
             className="text-lg sm:text-xl text-gray-300 max-w-2xl mb-10"
           >
-            AI-driven insights, real-time market data, and intelligent automation tools to elevate your trading strategy.
+            AI-driven insights, real-time market data, and intelligent
+            automation tools to elevate your trading strategy.
           </motion.p>
 
           <motion.button
@@ -170,23 +176,24 @@ export default function LandingPage() {
 
           <div id="hero-animation" className="flex gap-4 justify-center mt-12">
             {showLottie &&
-              ["/animations/Animation - 1743222346036.json", "/animations/Animation - 1743222346036.json"].map(
-                (src, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8 + index * 0.3, duration: 0.6 }}
-                  >
-                    <LottiePlayer
-                      autoplay
-                      loop
-                      src={src}
-                      style={{ height: "180px", width: "180px" }}
-                    />
-                  </motion.div>
-                )
-              )}
+              [
+                "/animations/Animation - 1743222346036.json",
+                "/animations/Animation - 1743222346036.json",
+              ].map((src, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8 + index * 0.3, duration: 0.6 }}
+                >
+                  <LottiePlayer
+                    autoplay
+                    loop
+                    src={src}
+                    style={{ height: "180px", width: "180px" }}
+                  />
+                </motion.div>
+              ))}
           </div>
         </div>
       </section>
@@ -196,10 +203,16 @@ export default function LandingPage() {
         ref={pricingRef}
         className="relative bg-white dark:bg-gray-900 py-24 px-6 sm:px-12 text-gray-900 dark:text-white overflow-hidden"
       >
-        <motion.div style={{ y, opacity }} className="max-w-6xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
+        <motion.div
+          style={{ y, opacity }}
+          className="max-w-6xl mx-auto text-center"
+        >
+          <h2 className="text-4xl font-bold mb-4">
+            Simple, Transparent Pricing
+          </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 mb-12">
-            Choose a plan that aligns with your trading goals. Transparent. Flexible. Powerful.
+            Choose a plan that aligns with your trading goals. Transparent.
+            Flexible. Powerful.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -209,11 +222,17 @@ export default function LandingPage() {
                 className={styles.pricingCard}
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.2, duration: 0.6, type: "spring" }}
+                transition={{
+                  delay: index * 0.2,
+                  duration: 0.6,
+                  type: "spring",
+                }}
                 viewport={{ once: true, amount: 0.2 }}
               >
                 <h3 className="text-2xl font-semibold mb-2">{plan.name}</h3>
-                <p className="text-4xl font-bold text-blue-600 mb-4">{plan.price}</p>
+                <p className="text-4xl font-bold text-blue-600 mb-4">
+                  {plan.price}
+                </p>
                 <ul className="text-left text-sm space-y-2 mb-6">
                   {plan.features.map((feature, i) => (
                     <li key={i} className="flex items-start gap-2">

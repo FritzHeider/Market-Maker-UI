@@ -42,7 +42,7 @@ const handleError = (err: unknown): ApiResponse<never> => {
 export const get = async <T>(
   endpoint: string,
   timeout = DEFAULT_TIMEOUT,
-  baseUrl = process.env.NEXT_PUBLIC_API_URL
+  baseUrl = process.env.NEXT_PUBLIC_API_URL,
 ): Promise<ApiResponse<T>> => {
   const controller = withTimeout(timeout);
   try {
@@ -61,7 +61,7 @@ export const post = async <T>(
   endpoint: string,
   payload: unknown,
   timeout = DEFAULT_TIMEOUT,
-  baseUrl = process.env.NEXT_PUBLIC_API_URL
+  baseUrl = process.env.NEXT_PUBLIC_API_URL,
 ): Promise<ApiResponse<T>> => {
   const controller = withTimeout(timeout);
   try {
@@ -81,7 +81,7 @@ export const put = async <T>(
   endpoint: string,
   payload: unknown,
   timeout = DEFAULT_TIMEOUT,
-  baseUrl = process.env.NEXT_PUBLIC_API_URL
+  baseUrl = process.env.NEXT_PUBLIC_API_URL,
 ): Promise<ApiResponse<T>> => {
   const controller = withTimeout(timeout);
   try {
@@ -100,7 +100,7 @@ export const put = async <T>(
 export const del = async <T>(
   endpoint: string,
   timeout = DEFAULT_TIMEOUT,
-  baseUrl = process.env.NEXT_PUBLIC_API_URL
+  baseUrl = process.env.NEXT_PUBLIC_API_URL,
 ): Promise<ApiResponse<T>> => {
   const controller = withTimeout(timeout);
   try {
