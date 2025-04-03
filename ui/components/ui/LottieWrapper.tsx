@@ -1,21 +1,24 @@
+// File: /components/ui/LottieWrapper.tsx
 "use client";
 
 import { Player as LottiePlayer } from "@lottiefiles/react-lottie-player";
 
-type LottieWrapperProps = {
+export default function LottieWrapper({
+  src,
+  className,
+  ...props
+}: {
   src: string;
-  style?: React.CSSProperties;
   className?: string;
-  [key: string]: unknown; // ✅ avoids `any`
-};
-
-export default function LottieWrapper({ src, ...props }: LottieWrapperProps) {
+  [key: string]: unknown;
+}) {
   return (
     <LottiePlayer
       autoplay
       loop
       src={src}
       style={{ height: "180px", width: "180px" }}
+      className={className}
       {...props}
     />
   );

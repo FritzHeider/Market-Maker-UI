@@ -7,13 +7,19 @@ import {
   useTransform,
   useMotionValueEvent,
 } from "framer-motion";
-import LottieWrapper from "@/components/ui/LottieWrapper";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import plans from "@/lib/plans";
 import Header from "@/app/components/Header";
-import About from "@/components/About";
 import Features from "@/components/Features";
+import About from "@/components/About";
 import Footer from "@/components/Footer";
+import styles from "./LandingPage.module.css";
+
+// Dynamically import LottieWrapper (client-only)
+const LottieWrapper = dynamic(() => import("@/components/ui/LottieWrapper"), {
+  ssr: false,
+});
 
 const floatingCharts = [
   "/svg/chart-line-1.svg",
@@ -22,9 +28,9 @@ const floatingCharts = [
 ];
 
 export default function LandingPage() {
+  const [showIntro, setShowIntro] = useState(true);
   const [showLottie, setShowLottie] = useState(false);
   const [showHeader, setShowHeader] = useState(false);
-  const [showIntro, setShowIntro] = useState(true);
   const pricingRef = useRef<HTMLDivElement | null>(null);
 
   const { scrollY } = useScroll();
@@ -37,26 +43,23 @@ export default function LandingPage() {
   const opacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   useEffect(() => {
-    const introTimer = setTimeout(() => setShowIntro(false), 2000);
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setShowLottie(true);
-      },
-      { threshold: 0.2 }
-    );
-
+    const timer = setTimeout(() => setShowIntro(false), 2000);
     const node = document.querySelector("#hero-animation");
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) setShowLottie(true);
+    }, { threshold: 0.2 });
+
     if (node) observer.observe(node);
 
     return () => {
-      clearTimeout(introTimer);
+      clearTimeout(timer);
       if (node) observer.unobserve(node);
     };
   }, []);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
-    if (latest > 80) setShowHeader(true);
+    setShowHeader(latest > 80);
   });
 
   const scrollToPricing = () => {
@@ -65,6 +68,7 @@ export default function LandingPage() {
 
   return (
     <main className="min-h-screen bg-gray-950 text-white overflow-x-hidden relative">
+      {/* Intro splash animation */}
       {showIntro && (
         <motion.div
           className="fixed inset-0 bg-black z-[9999] flex items-center justify-center"
@@ -78,7 +82,6 @@ export default function LandingPage() {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.6 }}
             xmlns="http://www.w3.org/2000/svg"
-            fill="none"
             viewBox="0 0 100 100"
             className="w-24 h-24 text-white"
           >
@@ -100,6 +103,7 @@ export default function LandingPage() {
 
       <Header showHeader={showHeader} onScrollToPricing={scrollToPricing} />
 
+      {/* Hero */}
       <section className="relative w-full h-screen overflow-hidden">
         <video
           autoPlay
@@ -111,35 +115,37 @@ export default function LandingPage() {
           <source src="/videos/looping.mp4" type="video/mp4" />
         </video>
 
+        {/* Floating visuals */}
         <div className="absolute inset-0 z-10 pointer-events-none">
           <Image
             src="/svg/candle-green.svg"
-            alt="Floating green candlestick"
+            alt="Green candle"
             width={24}
             height={24}
-            className="absolute top-10 left-1/4 opacity-70 animate-[float_6s_ease-in-out_infinite]"
+            className={`absolute top-10 left-1/4 opacity-70 ${styles.floatingSlow}`}
           />
           <Image
             src="/svg/candle-red.svg"
-            alt="Floating red candlestick"
+            alt="Red candle"
             width={32}
             height={32}
-            className="absolute bottom-16 right-1/3 opacity-50 animate-[float_4s_ease-in-out_infinite]"
+            className={`absolute bottom-16 right-1/3 opacity-50 ${styles.floatingFast}`}
           />
           {floatingCharts.map((src, i) => (
             <Image
               key={src}
               src={src}
-              alt={`Floating chart ${i + 1}`}
+              alt={`Chart ${i + 1}`}
               width={i === 1 ? 120 : 80}
               height={i === 1 ? 120 : 80}
               className={`absolute opacity-10 ${
                 i % 2 === 0 ? "top-20 left-10" : "bottom-24 right-12"
-              } animate-[float_8s_ease-in-out_infinite]`}
+              } ${styles.floatingSlow}`}
             />
           ))}
         </div>
 
+        {/* Hero content */}
         <div className="relative z-20 flex flex-col items-center justify-center h-full text-center px-6 sm:px-10">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
@@ -156,8 +162,8 @@ export default function LandingPage() {
             transition={{ delay: 0.3, duration: 0.8 }}
             className="text-lg sm:text-xl text-gray-300 max-w-2xl mb-10"
           >
-            AI-driven insights, real-time market data, and intelligent
-            automation tools to elevate your trading strategy.
+            AI-driven insights, real-time market data, and intelligent automation
+            tools to elevate your trading strategy.
           </motion.p>
 
           <motion.button
@@ -165,28 +171,28 @@ export default function LandingPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.5, duration: 0.5 }}
-            className="bg-blue-600 text-white font-semibold py-3 px-6 rounded-md hover:bg-blue-700 transition"
+            className={styles.ctaButton}
+            aria-label="Scroll to pricing"
           >
             Explore Pricing
           </motion.button>
 
+          {/* Lottie animation */}
           <div id="hero-animation" className="flex gap-4 justify-center mt-12">
-            {showLottie &&
-              ["/animations/Animation - 1743222346036.json"].map((src, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8 + index * 0.3, duration: 0.6 }}
-                >
-                  <LottieWrapper src="/animations/Animation - 1743222346036.json" />
-
-                </motion.div>
-              ))}
+            {showLottie && (
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8, duration: 0.6 }}
+              >
+                <LottieWrapper src="/animations/Animation - 1743222346036.json" />
+              </motion.div>
+            )}
           </div>
         </div>
       </section>
 
+      {/* Pricing */}
       <section
         id="pricing"
         ref={pricingRef}
@@ -196,9 +202,7 @@ export default function LandingPage() {
           style={{ y, opacity }}
           className="max-w-6xl mx-auto text-center"
         >
-          <h2 className="text-4xl font-bold mb-4">
-            Simple, Transparent Pricing
-          </h2>
+          <h2 className="text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 mb-12">
             Choose a plan that aligns with your trading goals. Transparent.
             Flexible. Powerful.
@@ -208,7 +212,7 @@ export default function LandingPage() {
             {plans.map((plan, index) => (
               <motion.div
                 key={index}
-                className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md"
+                className={styles.pricingCard}
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{
@@ -229,7 +233,7 @@ export default function LandingPage() {
                     </li>
                   ))}
                 </ul>
-                <button className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 transition">
+                <button className={styles.cardButton} aria-label={`Choose ${plan.name}`}>
                   Get Started
                 </button>
               </motion.div>

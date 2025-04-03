@@ -1,25 +1,29 @@
-/* === Modular CSS Classes === */
+/* === Modular Tailwind CSS Classes === */
 
 /* ✅ Primary CTA Button */
 .ctaButton {
-  @apply bg-blue-600 hover:bg-blue-700 active:scale-95 transition px-8 py-4 text-lg font-semibold text-white rounded-2xl shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400;
+  @apply bg-blue-600 hover:bg-blue-700 active:scale-95 transition
+    px-8 py-4 text-lg font-semibold text-white rounded-2xl shadow-lg
+    focus:outline-none focus:ring-2 focus:ring-blue-400;
 }
 
-/* ✅ Pricing Card */
+/* ✅ Pricing Card Container */
 .pricingCard {
-  @apply border border-gray-300 dark:border-gray-700 rounded-2xl p-6 shadow-md bg-white dark:bg-gray-800 transition-transform;
+  @apply border border-gray-300 dark:border-gray-700 rounded-2xl
+    p-6 shadow-md bg-white dark:bg-gray-800 transition-transform
+    hover:scale-[1.02];
 }
 
-/* ✅ Button inside pricing card */
+/* ✅ Pricing Card Button */
 .cardButton {
-  @apply w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-xl transition;
+  @apply w-full bg-blue-600 hover:bg-blue-700 text-white
+    py-2 px-4 rounded-xl transition font-medium text-sm;
 }
 
-/* === Animation Keyframes === */
+/* === Floating Animations === */
 
 @keyframes floatSlow {
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(0);
   }
   50% {
@@ -28,8 +32,7 @@
 }
 
 @keyframes floatFast {
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(0);
   }
   50% {
@@ -37,7 +40,6 @@
   }
 }
 
-/* ✅ Floating Chart/Candle Classes */
 .floatingSlow {
   animation: floatSlow 6s ease-in-out infinite;
 }
@@ -46,7 +48,23 @@
   animation: floatFast 4s ease-in-out infinite;
 }
 
-/* === Responsive Customization === */
+/* === Optional: Entrance Animation === */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fadeInUp {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* === Responsive Overrides === */
 @media (max-width: 640px) {
   .ctaButton {
     @apply px-6 py-3 text-base;
@@ -54,5 +72,9 @@
 
   .pricingCard {
     @apply p-4;
+  }
+
+  .cardButton {
+    @apply text-base;
   }
 }
