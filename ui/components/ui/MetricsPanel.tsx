@@ -16,7 +16,7 @@ export default function OrderPanel({ symbol = "BTC/USDT", marketPrice }: Props) 
   const [orderType, setOrderType] = useState<OrderType>("market");
   const [loading, setLoading] = useState<"buy" | "sell" | null>(null);
 
-  const { notify, success, error } = useToast();
+  const { notify, error } = useToast();
 
   const handleOrder = async (side: "buy" | "sell") => {
     const amt = parseFloat(amount.trim());

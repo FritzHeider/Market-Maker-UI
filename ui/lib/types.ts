@@ -34,13 +34,16 @@ export type Portfolio = {
 
 // 🚀 Payload sent from UI to order API
 export type OrderPayload = {
-  side: OrderSide;
+  side: "buy" | "sell";
   amount: number;
   symbol: string;
   limitPrice?: number;
-  type?: OrderType; // optional (default = "market")
-  clientOrderId?: string; // optional (for deduplication/tracking)
+  type?: "market" | "limit";
+  clientOrderId?: string;
+  takeProfit?: number;
+  stopLoss?: number;
 };
+
 
 // 📄 Full order object (returned by API or stored in DB)
 export type Order = {
