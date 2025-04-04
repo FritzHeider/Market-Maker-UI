@@ -5,15 +5,22 @@ import {
   useState,
   useRef,
   useCallback,
+  useMemo,
 } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
-import { motion, AnimatePresence, useSpring } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useMotionValue,
+  useSpring,
+  useTransform,
+} from "framer-motion";
 import {
   TrendingUp,
   TrendingDown,
   Activity,
-  WifiOff,
   Wifi,
+  WifiOff,
 } from "lucide-react";
 import { Line } from "react-chartjs-2";
 import {
@@ -43,7 +50,7 @@ interface DashboardMessage {
 
 export default function MetricsPanel() {
   const [metrics, setMetrics] = useState<Metrics | null>(null);
-  const [pnlClass, setPnlClass] = useState<string>("");
+  const [pnlClass, setPnlClass] = useState("");
   const [history, setHistory] = useState<number[]>([]);
   const previousPnlRef = useRef<number | null>(null);
 
@@ -54,15 +61,16 @@ export default function MetricsPanel() {
     }
   );
 
-  // 🧠 Track WebSocket status
-  const statusMap = {
+  const statusLabel = {
     [ReadyState.CONNECTING]: "Connecting",
     [ReadyState.OPEN]: "Connected",
     [ReadyState.CLOSING]: "Closing",
     [ReadyState.CLOSED]: "Disconnected",
     [ReadyState.UNINSTANTIATED]: "Idle",
   };
-  const statusColor = readyState === ReadyState.OPEN ? "text-green-400" : "text-yellow-400";
+
+  const statusColor =
+    readyState === ReadyState.OPEN ? "text-green-400" : "text-yellow-400";
 
   const computeSMA = useCallback((arr: number[], window = 5): number[] => {
     return arr.map((_, i, a) => {
@@ -72,13 +80,11 @@ export default function MetricsPanel() {
   }, []);
 
   useEffect(() => {
-    const msg = lastJsonMessage;
-    if (msg?.dashboardMetrics) {
-      const newMetrics = msg.dashboardMetrics;
-
+    if (lastJsonMessage?.dashboardMetrics) {
+      const newMetrics = lastJsonMessage.dashboardMetrics;
       setMetrics(newMetrics);
 
-      // Trigger toast on threshold drop
+      // Show toast on large PnL drop
       if (
         previousPnlRef.current !== null &&
         newMetrics.pnl24h < -10 &&
@@ -93,7 +99,6 @@ export default function MetricsPanel() {
 
       previousPnlRef.current = newMetrics.pnl24h;
 
-      // Update background gradient
       setPnlClass(
         newMetrics.pnl24h > 0
           ? "from-green-700 to-green-500"
@@ -102,7 +107,6 @@ export default function MetricsPanel() {
           : "from-blue-800 to-blue-600"
       );
 
-      // Update localStorage and in-memory history
       setHistory((prev) => {
         const updated = [...prev.slice(-29), newMetrics.pnl24h];
         localStorage.setItem("metricsHistory", JSON.stringify(updated));
@@ -112,8 +116,12 @@ export default function MetricsPanel() {
   }, [lastJsonMessage]);
 
   useEffect(() => {
-    const saved = localStorage.getItem("metricsHistory");
-    if (saved) setHistory(JSON.parse(saved));
+    try {
+      const saved = localStorage.getItem("metricsHistory");
+      if (saved) setHistory(JSON.parse(saved));
+    } catch {
+      console.warn("Failed to parse metricsHistory from localStorage.");
+    }
   }, []);
 
   if (!metrics) {
@@ -132,8 +140,12 @@ export default function MetricsPanel() {
       >
         <div className="absolute top-2 right-3 text-xs text-gray-200">
           <span className={`flex items-center gap-1 ${statusColor}`}>
-            {readyState === ReadyState.OPEN ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
-            {statusMap[readyState]}
+            {readyState === ReadyState.OPEN ? (
+              <Wifi className="w-3 h-3" />
+            ) : (
+              <WifiOff className="w-3 h-3" />
+            )}
+            {statusLabel[readyState]}
           </span>
         </div>
 
@@ -197,42 +209,42 @@ function MetricBox({
   history = [],
   trendline = [],
 }: MetricBoxProps) {
-  const [displayValue, setDisplayValue] = useState(value);
+  const motionValue = useMotionValue(0);
+  const spring = useSpring(motionValue, { stiffness: 80, damping: 20 });
+  const formatted = useTransform(spring, (v) =>
+    `${prefix}${v.toFixed(isPnl ? 2 : 0)}${suffix}`
+  );
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setDisplayValue((prev) => {
-        const diff = value - prev;
-        if (Math.abs(diff) < 0.5) return value;
-        return prev + diff * 0.25;
-      });
-    }, 50);
-    return () => clearInterval(interval);
-  }, [value]);
+    motionValue.set(value);
+  }, [value, motionValue]);
 
-  const chartData: ChartData<"line"> = {
-    labels: history.map((_, i) => i.toString()),
-    datasets: [
-      {
-        data: history,
-        borderColor: highlight ?? "#60A5FA",
-        backgroundColor: "transparent",
-        pointRadius: 0,
-        tension: 0.3,
-      },
-      ...(trendline.length
-        ? [
-            {
-              data: trendline,
-              borderColor: "#94a3b8",
-              borderDash: [4, 4],
-              pointRadius: 0,
-              tension: 0.3,
-            },
-          ]
-        : []),
-    ],
-  };
+  const chartData: ChartData<"line"> = useMemo(
+    () => ({
+      labels: history.map((_, i) => i.toString()),
+      datasets: [
+        {
+          data: history,
+          borderColor: highlight,
+          backgroundColor: "transparent",
+          pointRadius: 0,
+          tension: 0.3,
+        },
+        ...(trendline.length
+          ? [
+              {
+                data: trendline,
+                borderColor: "#94a3b8",
+                borderDash: [4, 4],
+                pointRadius: 0,
+                tension: 0.3,
+              },
+            ]
+          : []),
+      ],
+    }),
+    [history, trendline, highlight]
+  );
 
   const chartOptions: ChartOptions<"line"> = {
     responsive: true,
@@ -254,9 +266,9 @@ function MetricBox({
       <p className="text-sm text-blue-200 flex items-center justify-center gap-2">
         {icon} <span>{label}</span>
       </p>
-      <p className={`text-2xl font-bold ${highlight}`}>
-        {`${prefix}${displayValue.toFixed(isPnl ? 2 : 0)}${suffix}`}
-      </p>
+      <motion.p className={`text-2xl font-bold ${highlight}`}>
+        {formatted}
+      </motion.p>
       {history.length > 2 && (
         <div className="mt-1 h-12">
           <Line data={chartData} options={chartOptions} />

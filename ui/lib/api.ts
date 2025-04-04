@@ -1,4 +1,4 @@
-// File: /lib/api.ts
+import type { Order, OrderPayload } from "@/lib/types";
 
 export type ApiResponse<T> = {
   data?: T;
@@ -76,11 +76,7 @@ const request = async <T>({
   }
 };
 
-// 🔁 Reusable Helpers
-export const placeOrder = async (payload: OrderPayload) => {
-  return await post<{ success: boolean; order?: Order }>("/orders", payload);
-};
-
+// 🔁 Generic HTTP Methods
 export const get = <T>(
   endpoint: string,
   timeout?: number,
@@ -114,3 +110,8 @@ export const del = <T>(
   headers?: Record<string, string>
 ) =>
   request<T>({ method: "DELETE", endpoint, timeout, baseUrl, headers });
+
+// 🧠 Business-specific method
+export const placeOrder = async (payload: OrderPayload) => {
+  return await post<{ success: boolean; order?: Order }>("/orders", payload);
+};
