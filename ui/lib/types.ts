@@ -27,9 +27,9 @@ export type PricePoint = {
 
 // 🟩 Portfolio structure (used in dashboard, widgets, etc.)
 export type Portfolio = {
-  balance: number;     // total account value in USDT/USD
-  pnl: number;         // total profit or loss
-  timestamp?: string;  // optional snapshot timestamp
+  balance: number; // total account value in USDT/USD
+  pnl: number; // total profit or loss
+  timestamp?: string; // optional snapshot timestamp
 };
 
 // 🚀 Payload sent from UI to order API
@@ -38,20 +38,20 @@ export type OrderPayload = {
   amount: number;
   symbol: string;
   limitPrice?: number;
-  type?: OrderType;            // optional (default = "market")
-  clientOrderId?: string;      // optional (for deduplication/tracking)
+  type?: OrderType; // optional (default = "market")
+  clientOrderId?: string; // optional (for deduplication/tracking)
 };
 
 // 📄 Full order object (returned by API or stored in DB)
 export type Order = {
-  id: string;                  // unique UUID from backend
+  id: string; // unique UUID from backend
   amount: number;
-  price?: number;              // executed or limit price
+  price?: number; // executed or limit price
   type: OrderType;
   side: OrderSide;
   symbol: string;
   status: OrderStatus;
-  createdAt: string;           // ISO string
-  filledAt?: string;           // optional
-  clientOrderId?: string;      // optional (frontend-generated ID)
+  createdAt: string; // ISO string
+  filledAt?: string; // optional
+  clientOrderId?: string; // optional (frontend-generated ID)
 };

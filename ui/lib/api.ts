@@ -67,7 +67,9 @@ const request = async <T>({
         ...headers,
       },
       signal: controller.signal,
-      body: ["POST", "PUT"].includes(method) ? JSON.stringify(payload) : undefined,
+      body: ["POST", "PUT"].includes(method)
+        ? JSON.stringify(payload)
+        : undefined,
     });
 
     return await handleResponse<T>(res);
@@ -81,16 +83,15 @@ export const get = <T>(
   endpoint: string,
   timeout?: number,
   baseUrl?: string,
-  headers?: Record<string, string>
-) =>
-  request<T>({ method: "GET", endpoint, timeout, baseUrl, headers });
+  headers?: Record<string, string>,
+) => request<T>({ method: "GET", endpoint, timeout, baseUrl, headers });
 
 export const post = <T>(
   endpoint: string,
   payload: unknown,
   timeout?: number,
   baseUrl?: string,
-  headers?: Record<string, string>
+  headers?: Record<string, string>,
 ) =>
   request<T>({ method: "POST", endpoint, payload, timeout, baseUrl, headers });
 
@@ -99,7 +100,7 @@ export const put = <T>(
   payload: unknown,
   timeout?: number,
   baseUrl?: string,
-  headers?: Record<string, string>
+  headers?: Record<string, string>,
 ) =>
   request<T>({ method: "PUT", endpoint, payload, timeout, baseUrl, headers });
 
@@ -107,9 +108,8 @@ export const del = <T>(
   endpoint: string,
   timeout?: number,
   baseUrl?: string,
-  headers?: Record<string, string>
-) =>
-  request<T>({ method: "DELETE", endpoint, timeout, baseUrl, headers });
+  headers?: Record<string, string>,
+) => request<T>({ method: "DELETE", endpoint, timeout, baseUrl, headers });
 
 // 🧠 Business-specific method
 export const placeOrder = async (payload: OrderPayload) => {

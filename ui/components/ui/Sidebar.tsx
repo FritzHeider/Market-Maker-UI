@@ -27,12 +27,9 @@ export default function Sidebar() {
             <div className="flex justify-between">
               <span className="text-gray-400">PnL</span>
               <span
-                className={
-                  data.pnl >= 0 ? "text-green-400" : "text-red-400"
-                }
+                className={data.pnl >= 0 ? "text-green-400" : "text-red-400"}
               >
-                {data.pnl >= 0 ? "+" : ""}
-                ${data.pnl.toFixed(2)}
+                {data.pnl >= 0 ? "+" : ""}${data.pnl.toFixed(2)}
               </span>
             </div>
           </div>

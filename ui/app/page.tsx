@@ -46,9 +46,12 @@ export default function LandingPage() {
     const timer = setTimeout(() => setShowIntro(false), 2000);
     const node = document.querySelector("#hero-animation");
 
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) setShowLottie(true);
-    }, { threshold: 0.2 });
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setShowLottie(true);
+      },
+      { threshold: 0.2 },
+    );
 
     if (node) observer.observe(node);
 
@@ -162,8 +165,8 @@ export default function LandingPage() {
             transition={{ delay: 0.3, duration: 0.8 }}
             className="text-lg sm:text-xl text-gray-300 max-w-2xl mb-10"
           >
-            AI-driven insights, real-time market data, and intelligent automation
-            tools to elevate your trading strategy.
+            AI-driven insights, real-time market data, and intelligent
+            automation tools to elevate your trading strategy.
           </motion.p>
 
           <motion.button
@@ -202,7 +205,9 @@ export default function LandingPage() {
           style={{ y, opacity }}
           className="max-w-6xl mx-auto text-center"
         >
-          <h2 className="text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
+          <h2 className="text-4xl font-bold mb-4">
+            Simple, Transparent Pricing
+          </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 mb-12">
             Choose a plan that aligns with your trading goals. Transparent.
             Flexible. Powerful.
@@ -233,7 +238,10 @@ export default function LandingPage() {
                     </li>
                   ))}
                 </ul>
-                <button className={styles.cardButton} aria-label={`Choose ${plan.name}`}>
+                <button
+                  className={styles.cardButton}
+                  aria-label={`Choose ${plan.name}`}
+                >
                   Get Started
                 </button>
               </motion.div>

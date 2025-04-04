@@ -25,7 +25,7 @@ export default function MarketTicker() {
     {
       onOpen: () => setWsStatus(ReadyState.OPEN),
       onClose: () => setWsStatus(ReadyState.CLOSED),
-    }
+    },
   );
 
   return (
