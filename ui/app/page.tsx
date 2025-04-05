@@ -1,12 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useMotionValueEvent,
-} from "framer-motion";
+import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import plans from "@/lib/plans";
@@ -16,11 +11,10 @@ import About from "@/components/About";
 import Footer from "@/components/Footer";
 import styles from "./LandingPage.module.css";
 
-// Dynamically import LottieWrapper (client-only)
-const LottieWrapper = dynamic(() => import("@/components/ui/LottieWrapper"), {
-  ssr: false,
-});
+// Dynamically import LottieWrapper (client-only) to reduce bundle size.
+const LottieWrapper = dynamic(() => import("@/components/ui/LottieWrapper"), { ssr: false });
 
+// Floating chart image paths.
 const floatingCharts = [
   "/svg/chart-line-1.svg",
   "/svg/chart-line-2.svg",
@@ -28,50 +22,60 @@ const floatingCharts = [
 ];
 
 export default function LandingPage() {
+  // Local state for UI visibility.
   const [showIntro, setShowIntro] = useState(true);
   const [showLottie, setShowLottie] = useState(false);
   const [showHeader, setShowHeader] = useState(false);
+
+  // Reference for the pricing section.
   const pricingRef = useRef<HTMLDivElement | null>(null);
 
+  // Global scroll values.
   const { scrollY } = useScroll();
   const { scrollYProgress } = useScroll({
     target: pricingRef,
     offset: ["start end", "end start"],
   });
+  const yTransform = useTransform(scrollYProgress, [0, 1], [100, 0]);
+  const opacityTransform = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
-  const y = useTransform(scrollYProgress, [0, 1], [100, 0]);
-  const opacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
-
+  // Hide the intro splash after 2 seconds and trigger Lottie animation when hero section comes into view.
   useEffect(() => {
-    const timer = setTimeout(() => setShowIntro(false), 2000);
-    const node = document.querySelector("#hero-animation");
+    const introTimer = setTimeout(() => setShowIntro(false), 2000);
+    const heroAnimEl = document.querySelector("#hero-animation");
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setShowLottie(true);
-      },
-      { threshold: 0.2 },
-    );
-
-    if (node) observer.observe(node);
+    let observer: IntersectionObserver | null = null;
+    if (heroAnimEl) {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry?.isIntersecting) {
+            setShowLottie(true);
+          }
+        },
+        { threshold: 0.2 }
+      );
+      observer.observe(heroAnimEl);
+    }
 
     return () => {
-      clearTimeout(timer);
-      if (node) observer.unobserve(node);
+      clearTimeout(introTimer);
+      if (heroAnimEl && observer) observer.unobserve(heroAnimEl);
     };
   }, []);
 
+  // Toggle header visibility based on global scroll value.
   useMotionValueEvent(scrollY, "change", (latest) => {
     setShowHeader(latest > 80);
   });
 
+  // Smooth scroll to the pricing section.
   const scrollToPricing = () => {
     pricingRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <main className="min-h-screen bg-gray-950 text-white overflow-x-hidden relative">
-      {/* Intro splash animation */}
+      {/* Intro Splash Animation */}
       {showIntro && (
         <motion.div
           className="fixed inset-0 bg-black z-[9999] flex items-center justify-center"
@@ -104,10 +108,12 @@ export default function LandingPage() {
         </motion.div>
       )}
 
+      {/* Header */}
       <Header showHeader={showHeader} onScrollToPricing={scrollToPricing} />
 
-      {/* Hero */}
+      {/* Hero Section */}
       <section className="relative w-full h-screen overflow-hidden">
+        {/* Background Video */}
         <video
           autoPlay
           loop
@@ -118,7 +124,7 @@ export default function LandingPage() {
           <source src="/videos/looping.mp4" type="video/mp4" />
         </video>
 
-        {/* Floating visuals */}
+        {/* Floating Visuals */}
         <div className="absolute inset-0 z-10 pointer-events-none">
           <Image
             src="/svg/candle-green.svg"
@@ -134,21 +140,21 @@ export default function LandingPage() {
             height={32}
             className={`absolute bottom-16 right-1/3 opacity-50 ${styles.floatingFast}`}
           />
-          {floatingCharts.map((src, i) => (
+          {floatingCharts.map((src, index) => (
             <Image
               key={src}
               src={src}
-              alt={`Chart ${i + 1}`}
-              width={i === 1 ? 120 : 80}
-              height={i === 1 ? 120 : 80}
+              alt={`Chart ${index + 1}`}
+              width={index === 1 ? 120 : 80}
+              height={index === 1 ? 120 : 80}
               className={`absolute opacity-10 ${
-                i % 2 === 0 ? "top-20 left-10" : "bottom-24 right-12"
+                index % 2 === 0 ? "top-20 left-10" : "bottom-24 right-12"
               } ${styles.floatingSlow}`}
             />
           ))}
         </div>
 
-        {/* Hero content */}
+        {/* Hero Content */}
         <div className="relative z-20 flex flex-col items-center justify-center h-full text-center px-6 sm:px-10">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
@@ -158,17 +164,14 @@ export default function LandingPage() {
           >
             🚀 Smarter Trading with Botsensai
           </motion.h1>
-
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.8 }}
             className="text-lg sm:text-xl text-gray-300 max-w-2xl mb-10"
           >
-            AI-driven insights, real-time market data, and intelligent
-            automation tools to elevate your trading strategy.
+            AI-driven insights, real-time market data, and intelligent automation tools to elevate your trading strategy.
           </motion.p>
-
           <motion.button
             onClick={scrollToPricing}
             initial={{ opacity: 0, scale: 0.95 }}
@@ -180,7 +183,7 @@ export default function LandingPage() {
             Explore Pricing
           </motion.button>
 
-          {/* Lottie animation */}
+          {/* Lottie Animation */}
           <div id="hero-animation" className="flex gap-4 justify-center mt-12">
             {showLottie && (
               <motion.div
@@ -195,42 +198,36 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Pricing */}
+      {/* Pricing Section */}
       <section
         id="pricing"
         ref={pricingRef}
         className="relative bg-white dark:bg-gray-900 py-24 px-6 sm:px-12 text-gray-900 dark:text-white overflow-hidden"
       >
         <motion.div
-          style={{ y, opacity }}
+          style={{ y: yTransform, opacity: opacityTransform }}
           className="max-w-6xl mx-auto text-center"
         >
-          <h2 className="text-4xl font-bold mb-4">
-            Simple, Transparent Pricing
-          </h2>
+          <h2 className="text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 mb-12">
-            Choose a plan that aligns with your trading goals. Transparent.
-            Flexible. Powerful.
+            Choose a plan that aligns with your trading goals. Transparent. Flexible. Powerful.
           </p>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {plans.map((plan, index) => (
+            {plans.map((plan, idx) => (
               <motion.div
-                key={index}
+                key={idx}
                 className={styles.pricingCard}
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{
-                  delay: index * 0.2,
+                  delay: idx * 0.2,
                   duration: 0.6,
                   type: "spring",
                 }}
                 viewport={{ once: true, amount: 0.2 }}
               >
                 <h3 className="text-2xl font-semibold mb-2">{plan.name}</h3>
-                <p className="text-4xl font-bold text-blue-600 mb-4">
-                  {plan.price}
-                </p>
+                <p className="text-4xl font-bold text-blue-600 mb-4">{plan.price}</p>
                 <ul className="text-left text-sm space-y-2 mb-6">
                   {plan.features.map((feature, i) => (
                     <li key={i} className="flex items-start gap-2">
@@ -238,10 +235,7 @@ export default function LandingPage() {
                     </li>
                   ))}
                 </ul>
-                <button
-                  className={styles.cardButton}
-                  aria-label={`Choose ${plan.name}`}
-                >
+                <button className={styles.cardButton} aria-label={`Choose ${plan.name}`}>
                   Get Started
                 </button>
               </motion.div>

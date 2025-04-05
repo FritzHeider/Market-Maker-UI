@@ -1,34 +1,57 @@
 "use client";
 
-import { useEffect } from "react";
-import { toast } from "sonner"; // ✅ Only use this
+import { useEffect, useRef } from "react";
+import { useToast } from "./use-toast"; // Ensure this path is correct
 
-type NotificationMessage = {
+// Define the shape of the notification messages received from the WebSocket.
+export type NotificationMessage = {
   type: "notification";
   title?: string;
   message: string;
 };
 
+/**
+ * Custom hook to establish a WebSocket connection and dispatch system toast notifications.
+ */
 export function useSystemToast() {
-  useEffect(() => {
-    const ws = new WebSocket("wss://your-ws-endpoint");
+  const { notify } = useToast();
+  const wsRef = useRef<WebSocket | null>(null);
 
-    ws.onmessage = (event) => {
+  useEffect(() => {
+    // Use an environment variable for the WebSocket endpoint, or fall back to a default URL.
+    const endpoint = process.env.NEXT_PUBLIC_WS_ENDPOINT || "wss://your-ws-endpoint";
+    const ws = new WebSocket(endpoint);
+    wsRef.current = ws;
+
+    ws.onopen = () => {
+      console.info(`[WebSocket] Connected to ${endpoint}`);
+    };
+
+    ws.onmessage = (event: MessageEvent) => {
       try {
         const data = JSON.parse(event.data) as NotificationMessage;
-
+        // Only process notifications with a valid message.
         if (data.type === "notification" && data.message) {
-          toast({
-            title: data.title || "📢 Update",
-            description: data.message,
-            duration: 5000,
-          });
+          // Trigger a toast notification with the message and a duration of 5000ms.
+          notify(data.message, { duration: 5000 });
         }
-      } catch {
-        console.warn("[WebSocket] Invalid notification payload", event.data);
+      } catch (error) {
+        console.error("[WebSocket] Error parsing notification payload:", event.data, error);
       }
     };
 
-    return () => ws.close();
-  }, []);
+    ws.onerror = (error: Event) => {
+      console.error("[WebSocket] Error occurred:", error);
+    };
+
+    ws.onclose = (event: CloseEvent) => {
+      console.info("[WebSocket] Connection closed:", event);
+    };
+
+    // Cleanup: close the WebSocket connection on unmount.
+    return () => {
+      ws.close();
+      wsRef.current = null;
+    };
+  }, [notify]);
 }

@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
 import { placeOrder } from "@/lib/api";
 import type { OrderPayload, OrderType } from "@/lib/types";
+import { useToast } from "./use-toast";
 
 type Props = {
   symbol?: string;
@@ -16,20 +16,21 @@ export default function OrderPanel({ symbol = "BTC/USDT", marketPrice }: Props) 
   const [orderType, setOrderType] = useState<OrderType>("market");
   const [loading, setLoading] = useState<"buy" | "sell" | null>(null);
 
-  const { notify, error } = useToast();
+  // Destructure the toast functions from our custom hook.
+  const { notify, error: toastError, promise } = useToast();
 
   const handleOrder = async (side: "buy" | "sell") => {
     const amt = parseFloat(amount.trim());
-    const price =
-      orderType === "limit" ? parseFloat(limitPrice.trim()) : undefined;
+    const price = orderType === "limit" ? parseFloat(limitPrice.trim()) : undefined;
 
+    // Input validations with error notifications.
     if (!amount || isNaN(amt) || amt <= 0) {
-      error("Please enter a valid amount greater than 0.");
+      toastError("Please enter a valid amount greater than 0.");
       return;
     }
 
-    if (orderType === "limit" && (isNaN(price!) || price! <= 0)) {
-      error("Please enter a valid limit price.");
+    if (orderType === "limit" && (price === undefined || isNaN(price) || price <= 0)) {
+      toastError("Please enter a valid limit price.");
       return;
     }
 
@@ -44,22 +45,22 @@ export default function OrderPanel({ symbol = "BTC/USDT", marketPrice }: Props) 
     setLoading(side);
 
     try {
-      await toast.promise(placeOrder(payload), {
+      // Use the promise helper to show loading, success, and error toasts automatically.
+      await promise(placeOrder(payload), {
         loading: `Placing ${side.toUpperCase()} order...`,
         success: `✅ ${side.toUpperCase()} order placed for ${amt} ${symbol}`,
         error: "❌ Failed to place order",
       });
 
-      notify({
-        title: "Order Submitted",
-        description: `${side.toUpperCase()} ${amt} ${symbol}`,
-        duration: 4000,
-      });
+      // Optionally, show an additional success notification.
+      notify("Order placed successfully", { duration: 5000 });
 
+      // Reset the input fields.
       setAmount("");
       setLimitPrice("");
     } catch (err) {
-      console.error(err);
+      console.error("Something went wrong:", err);
+      toastError("Something went wrong.");
     } finally {
       setLoading(null);
     }
