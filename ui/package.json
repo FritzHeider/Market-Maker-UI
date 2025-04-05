@@ -7,6 +7,7 @@
   "main": "next.config.js",
   "scripts": {
     "build": "next build",
+    "build:clean": "rm -rf .next && next build",
     "check": "npm run lint && npm run type-check",
     "check-deps": "check-dependencies",
     "dev": "next dev",
@@ -52,15 +53,15 @@
     "@types/node": "22.13.14",
     "@types/react": "19.0.12",
     "@types/tailwindcss": "^3.0.11",
-    "autoprefixer": "^10.4.21",
+    "autoprefixer": "^10.4.17",
     "check-dependencies": "^2.0.0",
     "eslint": "9.23.0",
     "eslint-config-next": "15.2.4",
     "husky": "^9.1.7",
     "lottie-react": "^2.4.1",
-    "postcss": "^8.5.3",
+    "postcss": "^8.4.35",
     "prettier": "^3.5.3",
-    "tailwindcss": "^4.0.17"
+    "tailwindcss": "^4.1.3"
   },
   "repository": {
     "type": "git",

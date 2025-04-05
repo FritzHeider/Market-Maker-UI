@@ -1,5 +1,3 @@
-"use client";
-
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -8,14 +6,14 @@ import { Analytics } from "@vercel/analytics/react";
 import { ReactQueryProvider } from "@/lib/providers/react-query-provider";
 import { Toaster } from "sonner";
 
-// Initialize the Inter font with desired settings.
+// Load Inter font
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
 });
 
-// Metadata configuration for SEO and social sharing.
+// Metadata for SEO and sharing
 export const metadata: Metadata = {
   title: "Botsensai | AI Market Maker",
   description:
@@ -43,34 +41,30 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Botsensai | Smarter Trading",
-    description:
-      "Real-time crypto trading analytics and AI-assisted strategies.",
+    description: "Real-time crypto trading analytics and AI-assisted strategies.",
     creator: "@botsensai",
     images: ["/og-image.png"],
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} bg-gray-950 text-white`}>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
         <meta name="theme-color" content="#0f172a" />
         <link rel="icon" href="/favicon.ico" />
       </head>
-      <body className="min-h-screen antialiased font-sans bg-gray-950 text-white">
-        {/* Wrap the app with React Query provider */}
+      <body className="min-h-screen bg-gray-950 text-white font-sans antialiased">
         <ReactQueryProvider>
-          {/* Main application content */}
-          {children}
-          {/* Toast notifications */}
+          <main className="relative overflow-x-hidden">
+            {children}
+          </main>
+
+          {/* Global notifications */}
           <Toaster position="top-right" richColors theme="dark" />
-          {/* Performance insights */}
+
+          {/* Vercel performance tools */}
           <SpeedInsights />
-          {/* Analytics */}
           <Analytics />
         </ReactQueryProvider>
       </body>
