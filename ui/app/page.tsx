@@ -3,15 +3,15 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import Image from "next/image";
 
 import plans from "@/lib/plans";
-import Header from "@/app/components/Header";
 import Features from "@/components/Features";
 import About from "@/components/About";
 import Footer from "@/components/Footer";
 
-// Lazy load client-only component
+// Lazy load Lottie animation
 const LottieWrapper = dynamic(() => import("@/components/ui/LottieWrapper"), { ssr: false });
 
 const floatingCharts = [
@@ -64,7 +64,7 @@ export default function LandingPage() {
 
   return (
     <main className="min-h-screen bg-gray-950 text-white overflow-x-hidden relative">
-      
+
       {/* Intro Splash */}
       {showIntro && (
         <motion.div
@@ -73,6 +73,7 @@ export default function LandingPage() {
           animate={{ opacity: 0 }}
           exit={{ opacity: 0 }}
           transition={{ delay: 1.4, duration: 0.6 }}
+          aria-hidden="true"
         >
           <motion.svg
             initial={{ scale: 0.8, opacity: 0 }}
@@ -90,11 +91,19 @@ export default function LandingPage() {
         </motion.div>
       )}
 
-      {/* Sticky Header */}
-      <Header showHeader={showHeader} onScrollToPricing={scrollToPricing} />
+      {/* Top Navbar */}
+      <header className={`fixed top-0 left-0 w-full z-50 bg-gray-950/80 backdrop-blur-sm transition-all duration-300 ${showHeader ? 'shadow-lg' : ''}`}>
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <Link href="/" className="text-2xl font-bold text-white">Botsensai</Link>
+          <nav className="space-x-6 text-white font-medium">
+            <button onClick={scrollToPricing} className="hover:text-blue-400 transition">Pricing</button>
+            <Link href="/dashboard" className="hover:text-blue-400 transition">Dashboard</Link>
+          </nav>
+        </div>
+      </header>
 
       {/* Hero Section */}
-      <section className="relative w-full h-screen overflow-hidden">
+      <section className="relative w-full h-screen overflow-hidden pt-20">
         <video
           autoPlay
           muted
@@ -153,16 +162,25 @@ export default function LandingPage() {
           >
             AI-driven insights, real-time market data, and intelligent automation tools to elevate your trading strategy.
           </motion.p>
-          <motion.button
-            onClick={scrollToPricing}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+          <motion.div
+            className="flex flex-col sm:flex-row gap-4 items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.5 }}
-            className="cta-button"
-            aria-label="Explore Pricing Plans"
           >
-            Explore Pricing
-          </motion.button>
+            <button
+              onClick={scrollToPricing}
+              className="cta-button"
+              aria-label="Explore Pricing Plans"
+            >
+              Explore Pricing
+            </button>
+            <Link href="/dashboard" passHref>
+              <button className="cta-button bg-blue-600 hover:bg-blue-700 transition">
+                Go to Dashboard
+              </button>
+            </Link>
+          </motion.div>
 
           {/* Hero Animation */}
           <div id="hero-animation" className="flex justify-center mt-12">
