@@ -31,7 +31,139 @@ export default function LandingPage() {
   const { scrollYProgress } = useScroll({
     target: pricingRef,
     offset: ["start end", "end start"],
-  });
+  });/* app/page.tsx (Next.js 13+) */
+import Image from 'next/image';
+
+export default function Home() {
+  return (
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 text-white">
+      {/* ───────── NAVBAR ───────── */}
+      <header className="sticky top-0 z-30 bg-opacity-30 backdrop-blur-lg">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
+          <a href="/" className="text-2xl font-extrabold tracking-tight text-emerald-400">
+            Botsensai
+          </a>
+          <ul className="hidden md:flex gap-8 text-sm font-medium">
+            <li><a href="#features" className="hover:text-emerald-400">Features</a></li>
+            <li><a href="#pricing"  className="hover:text-emerald-400">Pricing</a></li>
+            <li><a href="#faq"      className="hover:text-emerald-400">FAQ</a></li>
+          </ul>
+          <div className="flex gap-3">
+            <a href="/login" className="rounded-md px-4 py-2 text-sm hover:bg-slate-700">Sign in</a>
+            <a href="/signup" className="rounded-md bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-emerald-400">
+              Start Free Trial
+            </a>
+          </div>
+        </nav>
+      </header>
+
+      {/* ───────── HERO ───────── */}
+      <section className="relative isolate flex-1">
+        <div className="mx-auto max-w-7xl px-6 py-24 lg:grid lg:grid-cols-2 lg:gap-24 lg:px-8">
+          <div className="max-w-xl lg:max-w-none">
+            <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl">
+              Smarter Market‑Making<br />
+              <span className="text-emerald-400">Powered by AI.</span>
+            </h1>
+            <p className="mt-6 text-lg leading-8 text-slate-300">
+              Botsensai watches every order book tick, predicts micro‑price
+              moves, and executes strategies that squeeze alpha out of
+              volatility — automatically.
+            </p>
+            <div className="mt-10 flex gap-4">
+              <a href="/signup" className="rounded-md bg-emerald-500 px-6 py-3 text-base font-semibold text-slate-900 hover:bg-emerald-400">
+                Try it Free
+              </a>
+              <a href="#demo" className="text-base font-semibold leading-6 text-white hover:text-emerald-400">
+                View Demo <span aria-hidden="true">→</span>
+              </a>
+            </div>
+          </div>
+          <div className="mt-16 lg:mt-0">
+            <Image
+              src="/hero-chart.png" /* add your own image in /public */
+              alt="Realtime order‑book chart"
+              width={560}
+              height={420}
+              className="w-full rounded-lg ring-1 ring-slate-700 shadow-2xl"
+              priority
+            />
+          </div>
+        </div>
+        {/* Decorative gradient blob */}
+        <div className="pointer-events-none absolute inset-x-0 top-[-10rem] -z-10 transform-gpu overflow-hidden blur-3xl">
+          <div
+            className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-emerald-500 to-cyan-400 opacity-20"
+            style=https://operator.chatgpt.com/c/684143a4b59c8192ab2770764eb65f14#cua_citation-%20clipPath:%20'polygon(74%%2044%,%20100%%2059%,%2098%%20100%,%200%20100%,%200%200,%2034%%200)'%20
+          />
+        </div>
+      </section>
+
+      {/* ───────── FEATURES ───────── */}
+      <section id="features" className="mx-auto max-w-7xl px-6 py-24 lg:px-8">
+        <h2 className="text-center text-3xl font-bold tracking-tight sm:text-4xl">Why Botsensai?</h2>
+        <p className="mx-auto mt-4 max-w-2xl text-center text-lg text-slate-300">
+          Edge‑driven automation for professional and retail traders alike.
+        </p>
+        <div className="mt-16 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            { title: 'Realtime Order Flow', desc: 'Millisecond‑level WebSocket feed keeps you ahead of the tape.' },
+            { title: 'AI Price Micro‑Forecasts', desc: 'Transformer models predict the next mid‑price move with >55% hit‑rate.' },
+            { title: 'Latency‑Aware Execution', desc: 'Co‑located servers route orders in <50µs.' },
+            { title: 'Strategy Builder', desc: 'Drag‑and‑drop blocks or Python code — back‑test instantly.' },
+            { title: 'Risk Controls', desc: 'Dynamic inventory caps, kill‑switches, and circuit breakers.' },
+            { title: '24/7 Support', desc: 'Slack & Discord channels with quant engineers on call.' }
+          ].map((f) => (
+            <div key={f.title} className="rounded-lg bg-slate-900 p-6 ring-1 ring-slate-700">
+              <h3 className="text-lg font-semibold text-emerald-400">{f.title}</h3>
+              <p className="mt-2 text-sm text-slate-300">{f.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ───────── PRICING ───────── */}
+      <section id="pricing" className="bg-slate-900/40 py-24">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <h2 className="text-center text-3xl font-bold tracking-tight sm:text-4xl">Simple Pricing</h2>
+          <p className="mx-auto mt-4 max-w-2xl text-center text-lg text-slate-300">
+            Flat monthly plans. Cancel anytime.
+          </p>
+          <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              { name: 'Starter', price: '$0', desc: 'Paper trading, 1 strategy, community support.' },
+              { name: 'Pro', price: '$29', desc: 'Live trading, 5 strategies, priority support.' },
+              { name: 'Enterprise', price: '$99', desc: 'Unlimited strategies, dedicated quant, SLA.' }
+            ].map((p) => (
+              <div key={p.name} className="flex flex-col rounded-xl bg-slate-800 p-8 ring-1 ring-slate-700">
+                <h3 className="text-lg font-semibold">{p.name}</h3>
+                <p className="mt-4 text-4xl font-extrabold">{p.price}<span className="text-base font-medium text-slate-400">/mo</span></p>
+                <p className="mt-4 flex-1 text-sm text-slate-300">{p.desc}</p>
+                <a href="/signup" className="mt-8 rounded-md bg-emerald-500 py-2 text-center font-semibold text-slate-900 hover:bg-emerald-400">
+                  Get Started
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ───────── FOOTER ───────── */}
+      <footer className="border-t border-slate-700 bg-slate-900/60">
+        <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
+          <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
+            <p className="text-sm text-slate-400">&copy; {new Date().getFullYear()} Botsensai Inc. All rights reserved.</p>
+            <ul className="flex gap-6 text-sm">
+              <li><a href="/terms" className="hover:text-emerald-400">Terms</a></li>
+              <li><a href="/privacy" className="hover:text-emerald-400">Privacy</a></li>
+              <li><a href="mailto:hello@botsensai.com" className="hover:text-emerald-400">Contact</a></li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
 
   const yTransform = useTransform(scrollYProgress, [0, 1], [100, 0]);
   const opacityTransform = useTransform(scrollYProgress, [0, 1], [0, 1]);
