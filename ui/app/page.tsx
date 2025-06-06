@@ -1,9 +1,4 @@
-// Suggested Improvements:
-// 1. Enhanced button hierarchy and spacing
-// 2. Better visual flow in LandingPage
-// 3. Lighter animation handling
-// 4. Mobile responsiveness refined
-
+// Enhanced Botsensai Landing Page
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
@@ -19,7 +14,12 @@ import Footer from "@/components/Footer";
 
 const LottieWrapper = dynamic(() => import("@/components/ui/LottieWrapper"), { ssr: false });
 
-const floatingCharts = ["/svg/chart-line-1.svg", "/svg/chart-line-2.svg", "/svg/chart-bars.svg"];
+// Consider fetching this from CMS or external config
+const floatingCharts = (typeof window !== "undefined" && window.__BOTSENSAI_CHARTS__) || [
+  "/svg/chart-line-1.svg",
+  "/svg/chart-line-2.svg",
+  "/svg/chart-bars.svg"
+];
 
 export default function LandingPage() {
   const [showIntro, setShowIntro] = useState(true);
@@ -59,7 +59,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white overflow-x-hidden relative">
+    <main className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white overflow-x-hidden relative font-inter">
 
       {showIntro && (
         <motion.div
