@@ -1,5 +1,6 @@
 // Enhanced Botsensai Landing Page with Dashboard Panel Upgrade
 "use client";
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
@@ -15,12 +16,13 @@ import PriceChart from "@/components/ui/PriceChart";
 import MarketTicker from "@/components/ui/MarketTicker";
 import StrategySelector from "@/components/ui/StrategySelector";
 import PortfolioPanel from "@/components/ui/PortfolioPanel";
+import LoginButton from "@/components/ui/LoginButton";
 import OrderPanel from "@/components/ui/OrderPanel";
 
 const LottieWrapper = dynamic(() => import("@/components/ui/LottieWrapper"), { ssr: false });
 
 // Consider fetching this from CMS or external config
-const floatingCharts = (typeof window !== "undefined" && window.__BOTSENSAI_CHARTS__) || [
+const floatingCharts = (typeof window !== "undefined" && (window as any).__BOTSENSAI_CHARTS__) || [
   "/svg/chart-line-1.svg",
   "/svg/chart-line-2.svg",
   "/svg/chart-bars.svg"
@@ -65,6 +67,9 @@ export default function LandingPage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white overflow-x-hidden relative font-inter">
+  <div className="p-4 text-right">
+    <LoginButton />
+  </div>
 
       {/* Real-time Dashboard Section */}
       <section className="bg-gray-950 py-24 px-6 sm:px-12">
