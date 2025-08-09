@@ -1,6 +1,7 @@
 # api/src/main.py
 
 import argparse
+import os
 import logging
 import requests
 from datetime import datetime, timedelta
@@ -10,11 +11,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.modules.datafeed.data_feed import DataFeed
 from src.modules.exchange_connector.auth import router as auth_router
 from src.modules.exchange_connector.secrets_manager import get_api_keys
+from src.modules.monetization.referral import router as referral_router
+from src.modules.compliance.kyc import router as kyc_router
 
-# OAuth Configuration
-CLIENT_ID = "YOUR_CLIENT_ID"
-CLIENT_SECRET = "YOUR_CLIENT_SECRET"
-REDIRECT_URI = "https://yourwebsite.com/oauth/callback"
+CLIENT_ID = os.getenv("OAUTH_CLIENT_ID", "")
+CLIENT_SECRET = os.getenv("OAUTH_CLIENT_SECRET", "")
+REDIRECT_URI = os.getenv("OAUTH_REDIRECT_URI", "")
+FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN", "http://localhost:3000")
 
 # Initialize FastAPI
 app = FastAPI()
@@ -22,18 +25,21 @@ app = FastAPI()
 # Add CORS middleware to allow frontend calls
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Replace with ["http://localhost:3000"] for tighter security
+    allow_origins=[FRONTEND_ORIGIN],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Include OAuth routes
+# Include API routes
 app.include_router(auth_router, prefix="/auth")
+app.include_router(referral_router, prefix="/referral")
+app.include_router(kyc_router, prefix="/kyc")
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 @app.get("/")
 def root():

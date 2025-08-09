@@ -3,7 +3,7 @@
 import asyncio
 import websockets
 import json
-from src.modules.utils.logger import get_logger
+from src.utils.logger import get_logger
 
 
 class WebSocketClient:

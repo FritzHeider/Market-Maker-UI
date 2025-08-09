@@ -4,7 +4,7 @@ import ccxt
 import yaml
 import asyncio
 from tenacity import retry, stop_after_attempt, wait_fixed
-from src.modules.utils.logger import get_logger
+from src.utils.logger import get_logger
 from src.modules.datafeed.websocket_client import WebSocketClient
 
 
