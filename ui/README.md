@@ -84,6 +84,7 @@ TailwindCSS v4+ using ESM (`tailwind.config.ts`):
 - ✅ Fully functional frontend with dashboard UI
 - ✅ Real-time ticker using WebSockets
 - ✅ Shared `lib/` logic for clean architecture
+- ✅ Engaging landing page with call-to-action and newsletter signup
 - ⚠️ Backend endpoints pending (FastAPI integration)
 - ⚠️ Auth and ML modules planned
 
