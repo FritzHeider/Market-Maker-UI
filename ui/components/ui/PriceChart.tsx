@@ -4,11 +4,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { ChartData, ChartOptions } from "chart.js";
 import "chart.js/auto";
-
-type PricePoint = {
-  timestamp: string;
-  price: number;
-};
+import { get } from "@/lib/api";
+import type { PricePoint } from "@/lib/types";
 
 export default function PriceChart() {
   const [chartData, setChartData] = useState<ChartData<"line">>({
@@ -21,12 +18,9 @@ export default function PriceChart() {
 
   const fetchChart = useCallback(async () => {
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/historical-prices`,
-      );
-      if (!res.ok) throw new Error("Failed to fetch price data");
-
-      const prices: PricePoint[] = await res.json();
+      const res = await get<PricePoint[]>("/historical-prices");
+      if (res.error) throw new Error(res.error);
+      const prices = res.data || [];
 
       const labels = prices.map((p) =>
         new Date(p.timestamp).toLocaleTimeString("en-US", {

@@ -5,8 +5,11 @@ import os
 import logging
 import requests
 from datetime import datetime, timedelta
+from typing import List, Optional, Literal
+
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field, model_validator
 
 from src.modules.datafeed.data_feed import DataFeed
 from src.modules.exchange_connector.auth import router as auth_router
@@ -39,6 +42,81 @@ app.include_router(kyc_router, prefix="/kyc")
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+class OrderPayload(BaseModel):
+    """Order parameters supplied by clients when creating a new order.
+
+    Attributes:
+        side: Direction of the trade, either ``"buy"`` or ``"sell"``.
+        amount: Positive quantity of the asset to trade.
+        symbol: Trading pair symbol such as ``"BTC/USDT"``.
+        limitPrice: Optional limit price when ``type`` is ``"limit"``.
+        type: Order type (e.g. ``"market"`` or ``"limit"``). Defaults to ``"market"``.
+        clientOrderId: Optional client supplied identifier.
+        takeProfit: Optional take profit price.
+        stopLoss: Optional stop loss price.
+
+    Example request payload::
+
+        {
+            "side": "buy",
+            "amount": 0.1,
+            "symbol": "BTC/USDT",
+            "type": "market"
+        }
+    """
+
+    side: Literal["buy", "sell"]
+    amount: float = Field(..., gt=0)
+    symbol: str
+    limitPrice: Optional[float] = Field(None, gt=0)
+    type: Literal["market", "limit"] = "market"
+    clientOrderId: Optional[str] = None
+    takeProfit: Optional[float] = Field(None, gt=0)
+    stopLoss: Optional[float] = Field(None, gt=0)
+
+    @model_validator(mode="after")
+    def check_limit_price(cls, model):
+        if model.type == "limit" and model.limitPrice is None:
+            raise ValueError("limitPrice is required for limit orders")
+        return model
+
+
+class Order(OrderPayload):
+    """Server-side representation of an order.
+
+    Extends :class:`OrderPayload` with additional read-only fields provided by
+    the backend.
+
+    Attributes:
+        id: Unique identifier assigned to the order.
+        price: Execution price for limit orders or fill price when executed.
+        status: Current status such as ``"pending"`` or ``"filled"``.
+        createdAt: UTC timestamp when the order was created.
+        filledAt: UTC timestamp when the order was filled, if applicable.
+
+    Example response object::
+
+        {
+            "id": 1,
+            "side": "buy",
+            "amount": 0.1,
+            "symbol": "BTC/USDT",
+            "type": "market",
+            "status": "pending",
+            "createdAt": "2023-01-01T00:00:00Z"
+        }
+    """
+
+    id: int
+    price: Optional[float] = None
+    status: str = "pending"
+    createdAt: datetime
+    filledAt: Optional[datetime] = None
+
+
+orders: List[Order] = []
 
 
 @app.get("/")
@@ -79,6 +157,84 @@ def get_historical_prices():
         for i in reversed(range(30))
     ]
     return prices
+
+
+@app.get("/orders")
+def list_orders(limit: int = 10):
+    """Retrieve recently created orders.
+
+    Parameters:
+        limit: Maximum number of most recent orders to return. Defaults to 10.
+
+    Returns:
+        List[Order]: Array of order objects sorted by creation time.
+
+    Sample request::
+
+        GET /orders?limit=5
+
+    Sample response::
+
+        [
+            {
+                "id": 1,
+                "side": "buy",
+                "amount": 0.1,
+                "symbol": "BTC/USDT",
+                "type": "market",
+                "status": "pending",
+                "createdAt": "2023-01-01T00:00:00Z"
+            }
+        ]
+    """
+
+    return orders[-limit:]
+
+
+@app.post("/orders")
+def create_order(payload: OrderPayload):
+    """Create and store a new order.
+
+    Parameters:
+        payload: :class:`OrderPayload` defining the order parameters.
+
+    Returns:
+        dict: ``{"success": True, "order": Order}``
+
+    Sample request::
+
+        POST /orders
+        {
+            "side": "buy",
+            "amount": 0.1,
+            "symbol": "BTC/USDT",
+            "type": "market"
+        }
+
+    Sample response::
+
+        {
+            "success": true,
+            "order": {
+                "id": 1,
+                "side": "buy",
+                "amount": 0.1,
+                "symbol": "BTC/USDT",
+                "type": "market",
+                "status": "pending",
+                "createdAt": "2023-01-01T00:00:00Z"
+            }
+        }
+    """
+
+    order = Order(
+        id=len(orders) + 1,
+        createdAt=datetime.utcnow(),
+        price=payload.limitPrice,
+        **payload.dict(exclude={"limitPrice"}),
+    )
+    orders.append(order)
+    return {"success": True, "order": order}
 
 def fetch_rest_data(data_feed, user_id):
     """Fetch market data via REST API."""

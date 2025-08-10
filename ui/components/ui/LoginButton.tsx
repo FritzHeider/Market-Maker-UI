@@ -8,7 +8,8 @@ export default function LoginButton() {
   const handleLogin = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`);
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const res = await fetch(`${baseUrl}/auth/login`);
       const data = await res.json();
       window.location.href = data.login_url;
     } catch (err) {
