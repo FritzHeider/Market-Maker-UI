@@ -45,6 +45,28 @@ logger = logging.getLogger(__name__)
 
 
 class OrderPayload(BaseModel):
+    """Order parameters supplied by clients when creating a new order.
+
+    Attributes:
+        side: Direction of the trade, either ``"buy"`` or ``"sell"``.
+        amount: Quantity of the asset to trade.
+        symbol: Trading pair symbol such as ``"BTC/USDT"``.
+        limitPrice: Optional limit price when ``type`` is ``"limit"``.
+        type: Order type (e.g. ``"market"`` or ``"limit"``). Defaults to ``"market"``.
+        clientOrderId: Optional client supplied identifier.
+        takeProfit: Optional take profit price.
+        stopLoss: Optional stop loss price.
+
+    Example request payload::
+
+        {
+            "side": "buy",
+            "amount": 0.1,
+            "symbol": "BTC/USDT",
+            "type": "market"
+        }
+    """
+
     side: str
     amount: float
     symbol: str
@@ -56,6 +78,31 @@ class OrderPayload(BaseModel):
 
 
 class Order(OrderPayload):
+    """Server-side representation of an order.
+
+    Extends :class:`OrderPayload` with additional read-only fields provided by
+    the backend.
+
+    Attributes:
+        id: Unique identifier assigned to the order.
+        price: Execution price for limit orders or fill price when executed.
+        status: Current status such as ``"pending"`` or ``"filled"``.
+        createdAt: UTC timestamp when the order was created.
+        filledAt: UTC timestamp when the order was filled, if applicable.
+
+    Example response object::
+
+        {
+            "id": 1,
+            "side": "buy",
+            "amount": 0.1,
+            "symbol": "BTC/USDT",
+            "type": "market",
+            "status": "pending",
+            "createdAt": "2023-01-01T00:00:00Z"
+        }
+    """
+
     id: int
     price: Optional[float] = None
     status: str = "pending"
@@ -108,11 +155,72 @@ def get_historical_prices():
 
 @app.get("/orders")
 def list_orders(limit: int = 10):
+    """Retrieve recently created orders.
+
+    Parameters:
+        limit: Maximum number of most recent orders to return. Defaults to 10.
+
+    Returns:
+        List[Order]: Array of order objects sorted by creation time.
+
+    Sample request::
+
+        GET /orders?limit=5
+
+    Sample response::
+
+        [
+            {
+                "id": 1,
+                "side": "buy",
+                "amount": 0.1,
+                "symbol": "BTC/USDT",
+                "type": "market",
+                "status": "pending",
+                "createdAt": "2023-01-01T00:00:00Z"
+            }
+        ]
+    """
+
     return orders[-limit:]
 
 
 @app.post("/orders")
 def create_order(payload: OrderPayload):
+    """Create and store a new order.
+
+    Parameters:
+        payload: :class:`OrderPayload` defining the order parameters.
+
+    Returns:
+        dict: ``{"success": True, "order": Order}``
+
+    Sample request::
+
+        POST /orders
+        {
+            "side": "buy",
+            "amount": 0.1,
+            "symbol": "BTC/USDT",
+            "type": "market"
+        }
+
+    Sample response::
+
+        {
+            "success": true,
+            "order": {
+                "id": 1,
+                "side": "buy",
+                "amount": 0.1,
+                "symbol": "BTC/USDT",
+                "type": "market",
+                "status": "pending",
+                "createdAt": "2023-01-01T00:00:00Z"
+            }
+        }
+    """
+
     order = Order(
         id=len(orders) + 1,
         createdAt=datetime.utcnow(),
