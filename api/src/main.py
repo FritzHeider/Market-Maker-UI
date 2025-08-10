@@ -5,11 +5,11 @@ import os
 import logging
 import requests
 from datetime import datetime, timedelta
-from typing import List, Optional
+from typing import List, Optional, Literal
 
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, model_validator
 
 from src.modules.datafeed.data_feed import DataFeed
 from src.modules.exchange_connector.auth import router as auth_router
@@ -49,7 +49,7 @@ class OrderPayload(BaseModel):
 
     Attributes:
         side: Direction of the trade, either ``"buy"`` or ``"sell"``.
-        amount: Quantity of the asset to trade.
+        amount: Positive quantity of the asset to trade.
         symbol: Trading pair symbol such as ``"BTC/USDT"``.
         limitPrice: Optional limit price when ``type`` is ``"limit"``.
         type: Order type (e.g. ``"market"`` or ``"limit"``). Defaults to ``"market"``.
@@ -67,14 +67,20 @@ class OrderPayload(BaseModel):
         }
     """
 
-    side: str
-    amount: float
+    side: Literal["buy", "sell"]
+    amount: float = Field(..., gt=0)
     symbol: str
-    limitPrice: Optional[float] = None
-    type: str = "market"
+    limitPrice: Optional[float] = Field(None, gt=0)
+    type: Literal["market", "limit"] = "market"
     clientOrderId: Optional[str] = None
-    takeProfit: Optional[float] = None
-    stopLoss: Optional[float] = None
+    takeProfit: Optional[float] = Field(None, gt=0)
+    stopLoss: Optional[float] = Field(None, gt=0)
+
+    @model_validator(mode="after")
+    def check_limit_price(cls, model):
+        if model.type == "limit" and model.limitPrice is None:
+            raise ValueError("limitPrice is required for limit orders")
+        return model
 
 
 class Order(OrderPayload):

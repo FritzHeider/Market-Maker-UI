@@ -1,11 +1,12 @@
 from fastapi.testclient import TestClient
-from src.main import app
+from src.main import app, orders
 
 client = TestClient(app)
 
 
 def test_orders_endpoint_cycle():
-    # initial state
+    orders.clear()
+
     res = client.get('/orders')
     assert res.status_code == 200
     assert res.json() == []
@@ -22,3 +23,24 @@ def test_orders_endpoint_cycle():
     data = res_after.json()
     assert len(data) == 1
     assert data[0]['id'] == order_id
+
+
+def test_create_order_invalid_side():
+    orders.clear()
+    payload = {"side": "hold", "amount": 1, "symbol": "BTC/USDT"}
+    res = client.post('/orders', json=payload)
+    assert res.status_code == 422
+
+
+def test_create_order_negative_amount():
+    orders.clear()
+    payload = {"side": "buy", "amount": -1, "symbol": "BTC/USDT"}
+    res = client.post('/orders', json=payload)
+    assert res.status_code == 422
+
+
+def test_limit_order_requires_limit_price():
+    orders.clear()
+    payload = {"side": "buy", "amount": 1, "symbol": "BTC/USDT", "type": "limit"}
+    res = client.post('/orders', json=payload)
+    assert res.status_code == 422
