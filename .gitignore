@@ -6,6 +6,10 @@ package-lock.json
 .next/
 dist/
 
+# Python
+__pycache__/
+*.pyc
+
 # Env config
 .env.local
 .env.*

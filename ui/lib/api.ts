@@ -55,7 +55,7 @@ const request = async <T>({
   payload,
   timeout = DEFAULT_TIMEOUT,
   headers = {},
-  baseUrl = process.env.NEXT_PUBLIC_API_URL,
+  baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
 }: RequestOptions): Promise<ApiResponse<T>> => {
   const controller = withTimeout(timeout);
 

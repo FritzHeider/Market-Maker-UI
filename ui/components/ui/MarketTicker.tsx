@@ -15,8 +15,9 @@ export default function MarketTicker() {
   const [price, setPrice] = useState("0.00");
   const [wsStatus, setWsStatus] = useState<ReadyState>(ReadyState.CONNECTING);
 
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
   useWebSocket<TickerMessage>(
-    `${process.env.NEXT_PUBLIC_API_URL?.replace("http", "ws")}/ws/ticker`,
+    `${baseUrl.replace("http", "ws")}/ws/ticker`,
     (data) => {
       if (data && typeof data.last === "string") {
         setPrice(parseFloat(data.last).toFixed(2));

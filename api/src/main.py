@@ -5,8 +5,11 @@ import os
 import logging
 import requests
 from datetime import datetime, timedelta
+from typing import List, Optional
+
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 from src.modules.datafeed.data_feed import DataFeed
 from src.modules.exchange_connector.auth import router as auth_router
@@ -39,6 +42,28 @@ app.include_router(kyc_router, prefix="/kyc")
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+class OrderPayload(BaseModel):
+    side: str
+    amount: float
+    symbol: str
+    limitPrice: Optional[float] = None
+    type: str = "market"
+    clientOrderId: Optional[str] = None
+    takeProfit: Optional[float] = None
+    stopLoss: Optional[float] = None
+
+
+class Order(OrderPayload):
+    id: int
+    price: Optional[float] = None
+    status: str = "pending"
+    createdAt: datetime
+    filledAt: Optional[datetime] = None
+
+
+orders: List[Order] = []
 
 
 @app.get("/")
@@ -79,6 +104,23 @@ def get_historical_prices():
         for i in reversed(range(30))
     ]
     return prices
+
+
+@app.get("/orders")
+def list_orders(limit: int = 10):
+    return orders[-limit:]
+
+
+@app.post("/orders")
+def create_order(payload: OrderPayload):
+    order = Order(
+        id=len(orders) + 1,
+        createdAt=datetime.utcnow(),
+        price=payload.limitPrice,
+        **payload.dict(exclude={"limitPrice"}),
+    )
+    orders.append(order)
+    return {"success": True, "order": order}
 
 def fetch_rest_data(data_feed, user_id):
     """Fetch market data via REST API."""
