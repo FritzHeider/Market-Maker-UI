@@ -1,6 +1,7 @@
 // File: /app/components/Header.tsx
 
 import { motion } from "framer-motion";
+import ThemeToggle from "./ThemeToggle";
 
 interface HeaderProps {
   showHeader: boolean;
@@ -16,7 +17,7 @@ export default function Header({ showHeader, onScrollToPricing }: HeaderProps) {
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <h1 className="text-xl font-bold tracking-tight">Botsensai</h1>
-        <nav>
+        <nav className="flex items-center gap-4">
           <button
             onClick={onScrollToPricing}
             className="text-sm bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-xl transition"
@@ -24,6 +25,7 @@ export default function Header({ showHeader, onScrollToPricing }: HeaderProps) {
           >
             Pricing
           </button>
+          <ThemeToggle />
         </nav>
       </div>
     </motion.header>

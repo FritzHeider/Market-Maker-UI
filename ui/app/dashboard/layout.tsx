@@ -13,6 +13,8 @@ const navLinks = [
   { href: "/dashboard/orders", label: "Orders" },
   { href: "/dashboard/portfolio", label: "Portfolio" },
   { href: "/dashboard/strategies", label: "Strategies" },
+  { href: "/dashboard/optimizer", label: "Optimizer" },
+  { href: "/dashboard/referrals", label: "Referrals" },
 ];
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
