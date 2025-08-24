@@ -32,7 +32,6 @@
     "@vercel/speed-insights": "^1.2.0",
     "axios": "^1.8.4",
     "chart.js": "^4.4.8",
-    "chartjs": "^0.3.24",
     "chartjs-adapter-date-fns": "^3.0.0",
     "chartjs-chart-financial": "^0.2.1",
     "clsx": "^2.1.1",
