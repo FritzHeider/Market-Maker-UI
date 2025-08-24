@@ -54,11 +54,13 @@ Develop a full-stack market-making bot that supports:
 
 ## 🌐 Environment Variables
 
-| Key                   | Description                             |
-| --------------------- | --------------------------------------- |
-| `NEXT_PUBLIC_API_URL` | Backend URL for REST & WebSocket access |
+| Key                   | Description                                   |
+| --------------------- | --------------------------------------------- |
+| `NEXT_PUBLIC_API_URL` | Backend URL for REST & WebSocket access       |
 
-Set these in `.env.local` and in Vercel Project → Settings → Environment Variables
+By default the UI uses a relative path (`''`) for API calls.
+Set `NEXT_PUBLIC_API_URL` in `.env.local` and in your Vercel project settings when
+the backend lives on a different domain.
 
 ---
 

@@ -4,5 +4,8 @@
   ],
   "routes": [
     { "src": "/(.*)", "dest": "ui/$1" }
-  ]
+  ],
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://api.example.com"
+  }
 }
