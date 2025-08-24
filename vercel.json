@@ -2,6 +2,12 @@
   "builds": [
     { "src": "ui/package.json", "use": "@vercel/next" }
   ],
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://market-maker-api.vercel.app/:path*"
+    }
+  ],
   "routes": [
     { "src": "/(.*)", "dest": "ui/$1" }
   ]
