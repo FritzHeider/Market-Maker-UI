@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
-import { ChartData, ChartOptions } from "chart.js";
+import type { ChartData, ChartOptions } from "chart.js";
 import "chart.js/auto";
 import { get } from "@/lib/api";
 import type { PricePoint } from "@/lib/types";
