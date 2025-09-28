@@ -1,0 +1,16 @@
+{
+  "name": "market-maker-monorepo",
+  "private": true,
+  "workspaces": [
+    "ui"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace ui",
+    "build": "npm run build --workspace ui",
+    "lint": "npm run lint --workspace ui",
+    "type-check": "npm run type-check --workspace ui"
+  },
+  "engines": {
+    "node": ">=18.18.0"
+  }
+}

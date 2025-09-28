@@ -1,8 +1,0 @@
-Unknown command: "lint"
-
-
-Did you mean one of these?
-  npm link # Symlink a package folder
-  npm run lint # run the "lint" package script
-To see a list of supported npm commands, run:
-  npm help
