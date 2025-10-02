@@ -4,12 +4,14 @@ import argparse
 import asyncio
 import logging
 import os
-from datetime import datetime, timedelta
-from typing import List, Literal, Optional
+import requests
+from datetime import datetime, timedelta, timezone
+from typing import List, Optional, Literal
 
 import requests
 from fastapi import Depends, FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, model_validator
 
 from src.modules.datafeed.data_feed import DataFeed
@@ -155,15 +157,81 @@ def exchange_code_for_token(code: str):
     token_data = response.json()
     return {"access_token": token_data["access_token"], "expires_in": token_data["expires_in"]}
 
+CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config", "config.yaml")
+SECRETS_PATH = os.path.join(os.path.dirname(__file__), "config", "secrets.yaml")
+
+data_feed = DataFeed(config_path=CONFIG_PATH, secrets_path=SECRETS_PATH)
+
+
 @app.get("/historical-prices")
 def get_historical_prices():
-    """Return mock historical price data for BTC/USDT."""
-    now = datetime.utcnow()
-    prices = [
-        {"timestamp": (now - timedelta(minutes=i)).isoformat() + "Z", "price": 28800 + i * 5}
-        for i in reversed(range(30))
-    ]
-    return prices
+    """Return historical price data for the configured default market."""
+
+    try:
+        config = data_feed.config or {}
+        exchange = config.get("default_exchange")
+        symbol = config.get("default_symbol")
+        timeframe = config.get("default_timeframe")
+        limit = config.get("default_limit", 100)
+
+        if not exchange or not symbol or not timeframe:
+            raise HTTPException(
+                status_code=500,
+                detail="Default market configuration is incomplete. Please update the API configuration.",
+            )
+
+        try:
+            ohlcv = data_feed.fetch_historical_data(
+                exchange_name=exchange,
+                symbol=symbol,
+                timeframe=timeframe,
+                limit=limit,
+            )
+        except Exception as exc:
+            logger.exception("Error fetching historical data: %s", exc)
+            raise HTTPException(
+                status_code=502,
+                detail=f"Failed to fetch historical data from {exchange}: {exc}",
+            ) from exc
+
+        if not ohlcv:
+            raise HTTPException(
+                status_code=400,
+                detail="Exchange credentials are missing or invalid. Please reconnect your exchange account.",
+            )
+
+        prices = []
+        for candle in ohlcv:
+            if len(candle) < 5:
+                logger.warning("Skipping malformed OHLCV candle: %s", candle)
+                continue
+
+            timestamp_ms = candle[0]
+            close_price = candle[4]
+            timestamp_iso = datetime.fromtimestamp(timestamp_ms / 1000, tz=timezone.utc).isoformat().replace("+00:00", "Z")
+
+            prices.append({
+                "timestamp": timestamp_iso,
+                "price": close_price,
+                "symbol": symbol,
+            })
+
+        if not prices:
+            raise HTTPException(
+                status_code=502,
+                detail="No valid historical data returned by the exchange.",
+            )
+
+        return prices
+
+    except HTTPException as exc:
+        return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+    except Exception as exc:  # pragma: no cover - defensive fallback
+        logger.exception("Unexpected error preparing historical prices: %s", exc)
+        return JSONResponse(
+            status_code=500,
+            content={"detail": "Unexpected error fetching historical data. Please try again later."},
+        )
 
 
 @app.get("/orders")
