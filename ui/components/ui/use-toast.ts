@@ -1,15 +1,26 @@
 "use client";
 
-import { toast as baseToast } from "sonner";
+import { toast } from "sonner";
 
-// Wrap the underlying toast library so that it accepts a message and options.
-export const useToast = () => {
-  return {
-    // Trigger a toast with a message and optional options (e.g., duration).
-    notify: (msg: string, options?: { duration?: number }) => baseToast(msg, options),
-    // For success and error, simply call baseToast with the message.
-    success: (msg: string) => baseToast(msg),
-    error: (msg: string) => baseToast(msg),
-    promise: baseToast.promise,
-  };
+type ToastPayload = {
+  title: string;
+  description?: string;
+  actionLabel?: string;
+  onAction?: () => void;
 };
+
+export function useToast() {
+  function notify({ title, description, actionLabel, onAction }: ToastPayload) {
+    toast(title, {
+      description,
+      action: actionLabel && onAction
+        ? {
+            label: actionLabel,
+            onClick: onAction,
+          }
+        : undefined,
+    });
+  }
+
+  return { toast: notify };
+}

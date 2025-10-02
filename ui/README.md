@@ -1,101 +1,75 @@
-# 🚀 Market Maker Bot – AI-Enhanced Trading Platform
+# Market Maker UI
 
-A modular, scalable, AI-powered crypto market-making bot built with **Next.js**, **TailwindCSS**, **TypeScript**, and a **FastAPI backend**. Supports real-time data, WebSocket updates, and strategy customization.
+Production-ready marketing site for Market Maker built with Next.js App Router, Tailwind CSS, Framer Motion, and shadcn/ui.
 
----
+## Getting started
 
-## 🎯 Objective
+```bash
+pnpm install
+pnpm dev
+```
 
-Develop a full-stack market-making bot that supports:
+The app runs at `http://localhost:3000`.
 
-- High-frequency trading
-- Arbitrage scanning across exchanges
-- OAuth-secured exchange integration
-- Web-based control panel with real-time updates
-- AI-powered dynamic strategy execution
+### Available scripts
 
----
+| Command | Description |
+| --- | --- |
+| `pnpm dev` | Start the local development server. |
+| `pnpm build` | Create a production build. |
+| `pnpm start` | Serve the production build. |
+| `pnpm lint` | Run ESLint. |
+| `pnpm type-check` | Run TypeScript without emitting files. |
 
-## 🔧 Architecture
+## Tech stack
 
-| Layer    | Stack                                      |
-| -------- | ------------------------------------------ |
-| Frontend | Next.js, TailwindCSS, TypeScript, Chart.js |
-| Backend  | FastAPI (Python), Redis, PostgreSQL        |
-| Hosting  | Vercel (frontend), Render or Railway (API) |
-| Auth     | OAuth / Firebase / AWS Cognito             |
-| Realtime | WebSockets, ccxt, REST APIs                |
-| AI/ML    | TensorFlow / PyTorch + Backtrader          |
+- **Next.js 15 App Router** with React Server Components
+- **Tailwind CSS 3** for design tokens and utility-first styling
+- **Framer Motion 12** for performant animations that respect `prefers-reduced-motion`
+- **shadcn/ui** primitives adapted to Market Maker’s design language
+- **React Hook Form + Zod** for accessible, typed forms
+- **next-mdx-remote** for MDX-powered blog posts
 
----
+## Design system
 
-## 🧱 Frontend Structure
+Design tokens live in [`lib/design-tokens.ts`](./lib/design-tokens.ts) and expose motion easing, durations, and layout spacing. Copy and sample data live in [`lib/copy.ts`](./lib/copy.ts).
 
-### `/pages`
+### Theming
 
-- `index.tsx` – Landing page
-- `dashboard.tsx` – Main trading interface (Chart, Ticker, Orders)
+The project uses the `class` strategy via [`next-themes`](https://github.com/pacocoursey/next-themes). Global CSS variables are defined in [`styles/globals.css`](./styles/globals.css) and mapped into Tailwind in [`tailwind.config.ts`](./tailwind.config.ts).
 
-### `/components/ui`
+To tweak the palette:
 
-- `MarketTicker.tsx` – Real-time price feed (via WebSocket)
-- `PriceChart.tsx` – Historical prices
-- `OrderPanel.tsx` – Submit buy/sell orders
-- `StrategySelector.tsx` – Choose or build strategies
+1. Update the HSL variables under `:root` and `.dark` in `styles/globals.css`.
+2. Adjust `--radius` or `--shadow` tokens to change component shape or depth.
+3. Tailwind utilities automatically pick up changes through `hsl(var(--token))` references.
 
-### `/lib`
+### Animations
 
-- `types.ts` – Shared types (`PricePoint`, `Portfolio`, `Order`)
-- `api.ts` – REST data fetchers
-- `websocket.ts` – `useWebSocket` hook for real-time data
-- `utils.ts` – Formatters (`formatCurrency`, `timeAgo`)
+Spring configurations and base easing live alongside layout tokens. Components that animate import from `lib/design-tokens.ts` to stay consistent. Motion is disabled or reduced when users opt into reduced motion.
 
----
+## Content
 
-## 🌐 Environment Variables
+MDX posts are stored under [`content/blog`](./content/blog). Each file includes frontmatter and body content. Use `pnpm dev` to preview new posts locally.
 
-| Key                   | Description                             |
-| --------------------- | --------------------------------------- |
-| `NEXT_PUBLIC_API_URL` | Backend URL for REST & WebSocket access |
+## Accessibility & Performance
 
-Set these in `.env.local` and in Vercel Project → Settings → Environment Variables
+- Focus states rely on Tailwind utilities that reference the `--ring` token.
+- All interactive components are keyboard accessible and respect reduced motion.
+- Images use `next/image` with responsive `sizes`.
 
----
+## Theming quick reference
 
-## 🔌 Live Updates
+```ts
+:root {
+  --bg: 0 0% 100%;
+  --fg: 224 71% 4%;
+  --primary: 221 83% 53%;
+  --accent: 174 60% 40%;
+  --warn: 35 90% 55%;
+  --danger: 0 85% 58%;
+  --radius: 1.75rem;
+}
+```
 
-- WebSocket feed: `/ws/ticker`
-- Real-time ticker powered by custom `useWebSocket` hook
-- Chart and Portfolio auto-refresh
-
----
-
-## 📦 Tailwind Setup
-
-TailwindCSS v4+ using ESM (`tailwind.config.ts`):
-
-- `moduleResolution: "bundler"` in `tsconfig.json`
-- PostCSS config uses `@tailwindcss/postcss`
-
----
-
-## 🛠️ Current Status
-
-- ✅ Fully functional frontend with dashboard UI
-- ✅ Real-time ticker using WebSockets
-- ✅ Shared `lib/` logic for clean architecture
-- ✅ Engaging landing page with call-to-action and newsletter signup
-- ⚠️ Backend endpoints pending (FastAPI integration)
-- ⚠️ Auth and ML modules planned
-
----
-
-## 🚀 Next Steps
-
-- Connect FastAPI backend with portfolio, order, and websocket endpoints
-- Implement real AI strategies and strategy optimizer
-- Add user auth and secure key storage
-
----
-
-Built for developers, quants, and AI traders. ✨
+Adjust these values to evolve the palette while keeping semantic Tailwind classes stable.

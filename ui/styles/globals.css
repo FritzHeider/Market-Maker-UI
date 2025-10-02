@@ -1,4 +1,102 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
+:root {
+  color-scheme: light;
+  --bg: 0 0% 100%;
+  --fg: 224 71% 4%;
+  --muted: 220 14% 96%;
+  --muted-fg: 220 9% 46%;
+  --border: 220 10% 92%;
+  --primary: 221 83% 53%;
+  --primary-fg: 0 0% 100%;
+  --accent: 174 60% 40%;
+  --accent-fg: 0 0% 100%;
+  --warn: 35 90% 55%;
+  --danger: 0 85% 58%;
+  --ring: 221 83% 53%;
+  --card: 0 0% 100%;
+  --card-fg: 224 71% 4%;
+  --shadow: 224 71% 4% / 0.22;
+  --radius: 1.75rem;
+}
+
+.dark {
+  color-scheme: dark;
+  --bg: 224 14% 7%;
+  --fg: 210 40% 98%;
+  --muted: 215 16% 16%;
+  --muted-fg: 217 16% 75%;
+  --border: 215 18% 22%;
+  --primary: 221 83% 66%;
+  --primary-fg: 224 14% 7%;
+  --accent: 174 70% 55%;
+  --accent-fg: 224 14% 7%;
+  --warn: 35 95% 60%;
+  --danger: 0 90% 62%;
+  --ring: 221 83% 66%;
+  --card: 224 14% 10%;
+  --card-fg: 210 40% 98%;
+  --shadow: 210 40% 2% / 0.44;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    @apply border-border;
+  }
+
+  html {
+    font-feature-settings: "cv11", "ss01";
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased min-h-screen font-sans;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    @apply bg-primary text-primary-foreground;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-offset-2 ring-offset-background ring-ring;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  [role="button"]:focus-visible {
+    @apply shadow-focus;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .bg-hero-mesh {
+    background: radial-gradient(60% 60% at 50% 10%, hsl(var(--primary) / 0.18), transparent 65%),
+      radial-gradient(40% 40% at 85% 15%, hsl(var(--accent) / 0.16), transparent 65%),
+      radial-gradient(35% 35% at 15% 25%, hsl(var(--warn) / 0.14), transparent 60%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
