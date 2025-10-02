@@ -1,3 +1,10 @@
-# Add FastAPI, Uvicorn, and dependencies here
 fastapi
 uvicorn
+requests
+boto3
+ccxt
+PyYAML
+tenacity
+websockets
+pandas
+matplotlib
