@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useSystemToast } from "@/components/ui/toaster";
 import MarketTicker from "@/components/ui/MarketTicker";
 import OrderPanel from "@/components/ui/OrderPanel";
@@ -11,20 +12,91 @@ import Link from "next/link";
 
 export default function Dashboard() {
   useSystemToast(); // 🔔 Connects WebSocket-based toasts
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/dashboard", label: "Dashboard" },
+    { href: "/settings", label: "Settings" },
+  ];
+
+  const getLinkClasses = (href: string) =>
+    `transition ${
+      href === "/dashboard" ? "text-blue-400" : "hover:text-blue-400"
+    }`;
 
   return (
     <main className="min-h-screen bg-gray-950 text-white flex flex-col">
-      
+
       {/* Sticky Dashboard Header */}
       <header className="sticky top-0 z-40 w-full bg-gray-900/90 backdrop-blur border-b border-gray-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <h1 className="text-xl font-bold tracking-wide">📈 Botsensai Dashboard</h1>
-          <nav className="space-x-6 text-sm font-medium text-gray-300">
-            <Link href="/" className="hover:text-blue-400 transition">Home</Link>
-            <Link href="/dashboard" className="text-blue-400">Dashboard</Link>
-            <Link href="/settings" className="hover:text-blue-400 transition">Settings</Link>
-          </nav>
+          <div className="flex items-center gap-3">
+            <nav className="hidden md:flex space-x-6 text-sm font-medium text-gray-300">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={getLinkClasses(link.href)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+            <button
+              type="button"
+              className="md:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-300 hover:text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+              aria-label="Toggle navigation menu"
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-navigation"
+              onClick={() => setIsMenuOpen((prev) => !prev)}
+            >
+              <span className="sr-only">Toggle navigation</span>
+              <svg
+                className="h-6 w-6"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                {isMenuOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                  />
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
+        {isMenuOpen && (
+          <nav
+            id="mobile-navigation"
+            className="md:hidden border-t border-gray-800 bg-gray-900/95"
+          >
+            <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col space-y-4 text-sm font-medium text-gray-300">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`block ${getLinkClasses(link.href)}`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </nav>
+        )}
       </header>
 
       {/* Main Content */}
