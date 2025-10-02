@@ -31,11 +31,17 @@ export default function LandingPage() {
         <p className="text-gray-400 max-w-2xl mb-8">
           Engage with real-time data and intelligent strategies to stay ahead of the market.
         </p>
-        <div className="flex gap-4">
-          <Link href="/dashboard" className="px-6 py-3 bg-blue-600 rounded-md text-white">
+        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+          <Link
+            href="/dashboard"
+            className="px-6 py-3 bg-blue-600 rounded-md text-white w-full sm:w-auto"
+          >
             Get Started
           </Link>
-          <button onClick={scrollToDashboard} className="px-6 py-3 bg-gray-800 rounded-md text-white">
+          <button
+            onClick={scrollToDashboard}
+            className="px-6 py-3 bg-gray-800 rounded-md text-white w-full sm:w-auto"
+          >
             Learn More
           </button>
         </div>
