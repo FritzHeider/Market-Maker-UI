@@ -1,13 +1,23 @@
 # src/modules/datafeed/websocket_client.py
 
 import asyncio
-import websockets
 import json
+from typing import Awaitable, Callable, Optional
+
+import websockets
+from websockets.exceptions import ConnectionClosed
+
 from src.utils.logger import get_logger
 
 
 class WebSocketClient:
-    def __init__(self, exchange_name: str, ws_url: str, symbol: str):
+    def __init__(
+        self,
+        exchange_name: str,
+        ws_url: str,
+        symbol: str,
+        message_handler: Optional[Callable[[dict], Awaitable[None]]] = None,
+    ):
         """
         Initialize the WebSocketClient.
 
@@ -20,6 +30,7 @@ class WebSocketClient:
         self.ws_url = ws_url
         self.symbol = symbol
         self.connection = None
+        self.message_handler = message_handler
 
     async def connect(self):
         """Establish a WebSocket connection."""
@@ -61,16 +72,41 @@ class WebSocketClient:
 
     async def receive_data(self):
         """Receive and process real-time data."""
+        if not self.connection:
+            return
+
         try:
             while True:
                 message = await self.connection.recv()
                 data = json.loads(message)
-                self.logger.info(f"Received data: {data}")
+                if self.message_handler:
+                    await self.message_handler(data)
+                else:
+                    self.logger.info(f"Received data: {data}")
+        except ConnectionClosed as exc:
+            self.logger.info(
+                "WebSocket connection closed: code=%s reason=%s", exc.code, exc.reason
+            )
+            raise
+        except asyncio.CancelledError:
+            raise
         except Exception as e:
             self.logger.error(f"Error receiving WebSocket data: {e}")
+            raise
 
-    async def run(self):
+    async def close(self):
+        """Close the WebSocket connection if it is open."""
+        if self.connection and not self.connection.closed:
+            await self.connection.close()
+            self.logger.info("Closed WebSocket connection")
+        self.connection = None
+
+    async def run(self, message_handler: Optional[Callable[[dict], Awaitable[None]]] = None):
         """Main WebSocket event loop."""
-        await self.connect()
-        await self.subscribe()
-        await self.receive_data()
+        self.message_handler = message_handler
+        try:
+            await self.connect()
+            await self.subscribe()
+            await self.receive_data()
+        finally:
+            await self.close()

@@ -2,8 +2,10 @@
 
 import ccxt
 import yaml
-import asyncio
+from typing import Awaitable, Callable, Optional
+
 from tenacity import retry, stop_after_attempt, wait_fixed
+
 from src.utils.logger import get_logger
 from src.modules.datafeed.websocket_client import WebSocketClient
 
@@ -99,7 +101,12 @@ class DataFeed:
             self.logger.warning(f"Retrying fetch_historical_data for {symbol} on {exchange_name} due to error: {e}")
             raise
 
-    def start_websocket(self, exchange_name: str, symbol: str):
+    async def start_websocket(
+        self,
+        exchange_name: str,
+        symbol: str,
+        on_message: Optional[Callable[[dict], Awaitable[None]]] = None,
+    ):
         """
         Initialize and start the WebSocket client for real-time data streaming.
 
@@ -121,12 +128,15 @@ class DataFeed:
         self.websocket_client = WebSocketClient(
             exchange_name=exchange_name,
             ws_url=ws_url,
-            symbol=symbol
+            symbol=symbol,
+            message_handler=on_message,
         )
         self.logger.info(f"Starting WebSocket for {symbol} on {exchange_name}")
 
-        # Run WebSocket in an event loop
-        try:
-            asyncio.run(self.websocket_client.run())
-        except Exception as e:
-            self.logger.error(f"WebSocket client error: {e}")
+        await self.websocket_client.run(on_message)
+
+    async def stop_websocket(self):
+        """Stop the current WebSocket client if running."""
+        if self.websocket_client:
+            await self.websocket_client.close()
+            self.websocket_client = None

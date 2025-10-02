@@ -1,13 +1,14 @@
 # api/src/main.py
 
 import argparse
-import os
+import asyncio
 import logging
-import requests
+import os
 from datetime import datetime, timedelta
-from typing import List, Optional, Literal
+from typing import List, Literal, Optional
 
-from fastapi import FastAPI, Depends, HTTPException
+import requests
+from fastapi import Depends, FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, model_validator
 
@@ -42,6 +43,12 @@ app.include_router(kyc_router, prefix="/kyc")
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Initialize shared DataFeed instance
+data_feed = DataFeed(
+    config_path="src/config/config.yaml",
+    secrets_path="src/config/secrets.yaml",
+)
 
 
 class OrderPayload(BaseModel):
@@ -236,6 +243,33 @@ def create_order(payload: OrderPayload):
     orders.append(order)
     return {"success": True, "order": order}
 
+
+@app.websocket("/ws/ticker")
+async def ticker_stream(
+    websocket: WebSocket,
+    exchange: str = "binance",
+    symbol: str = "BTCUSDT",
+):
+    """Stream real-time ticker updates to connected websocket clients."""
+
+    await websocket.accept()
+
+    async def forward_message(payload: dict):
+        await websocket.send_json(payload)
+
+    try:
+        await data_feed.start_websocket(
+            exchange_name=exchange,
+            symbol=symbol,
+            on_message=forward_message,
+        )
+    except WebSocketDisconnect:
+        logger.info("WebSocket client disconnected")
+    except Exception as exc:  # pragma: no cover - defensive logging
+        logger.error("Error streaming ticker data: %s", exc)
+    finally:
+        await data_feed.stop_websocket()
+
 def fetch_rest_data(data_feed, user_id):
     """Fetch market data via REST API."""
     api_keys = get_api_keys(user_id)
@@ -247,8 +281,6 @@ def fetch_rest_data(data_feed, user_id):
         market_data = data_feed.fetch_market_data(
             exchange_name="binance",
             symbol="BTC/USDT",
-            api_key=api_keys["api_key"],
-            secret=api_keys["secret_key"],
         )
         logger.info(f"Market Data: {market_data}")
         return market_data
@@ -262,13 +294,17 @@ def stream_websocket_data(data_feed, user_id):
         logger.error("API keys not found. Please authenticate via OAuth.")
         return {"error": "API keys not found"}
 
+    async def log_payload(payload: dict):
+        logger.info("Ticker update: %s", payload)
+
     try:
-        data_feed.start_websocket(exchange_name="binance", symbol="BTCUSDT",
-                                  api_key=api_keys["api_key"], secret=api_keys["secret_key"])
-        data_feed.start_websocket(exchange_name="coinbase", symbol="BTC-USD",
-                                  api_key=api_keys["api_key"], secret=api_keys["secret_key"])
-        data_feed.start_websocket(exchange_name="kraken", symbol="BTC/USD",
-                                  api_key=api_keys["api_key"], secret=api_keys["secret_key"])
+        asyncio.run(
+            data_feed.start_websocket(
+                exchange_name="binance",
+                symbol="BTCUSDT",
+                on_message=log_payload,
+            )
+        )
     except Exception as e:
         logger.error(f"Error streaming WebSocket data: {str(e)}")
 
