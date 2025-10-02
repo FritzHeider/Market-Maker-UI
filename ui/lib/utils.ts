@@ -1,126 +1,47 @@
-// src/lib/utils.ts
-import { type ClassValue, clsx } from "clsx";
+import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-// ======================
-// STYLING UTILITIES
-// ======================
-
 /**
- * Merges and optimizes Tailwind CSS classes
- * @example cn("text-red-500", "hover:text-red-700")
+ * Utility to compose Tailwind class names with conditional logic.
  */
-export function cn(...inputs: ClassValue[]): string {
+export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-// ======================
-// FORMATTING UTILITIES
-// ======================
-
 /**
- * Formats a number as currency
- * @example formatCurrency(1234.56) → "$1,234.56"
+ * Format large numbers into abbreviated strings (e.g. 12.3k).
  */
-export function formatCurrency(
-  value: number,
-  options: {
-    currency?: string;
-    locale?: string;
-    minimumFractionDigits?: number;
-    maximumFractionDigits?: number;
-  } = {}
-): string {
-  const {
-    currency = "USD",
-    locale = "en-US",
-    minimumFractionDigits = 2,
-    maximumFractionDigits = 2,
-  } = options;
-
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency,
-    minimumFractionDigits,
-    maximumFractionDigits,
+export function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
+  return new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: 1,
+    notation: "compact",
+    compactDisplay: "short",
+    ...options,
   }).format(value);
 }
 
 /**
- * Formats a date as relative time (time ago)
- * @example timeAgo("2024-01-01T12:00:00Z") → "3 hours ago"
+ * Format currency values for UI display.
  */
-export function timeAgo(
-  timestamp: string | Date,
-  options: {
-    locale?: string;
-    style?: Intl.RelativeTimeFormatStyle;
-  } = {}
-): string {
-  const { locale = "en-US", style = "short" } = options;
-  const date = typeof timestamp === "string" ? new Date(timestamp) : timestamp;
-  const then = date.getTime();
-  const now = Date.now();
-  const diff = then - now;
-
-  if (isNaN(then)) return "Invalid date";
-
-  const rtf = new Intl.RelativeTimeFormat(locale, { 
-    numeric: "auto", 
-    style 
-  });
-
-  const seconds = Math.floor(diff / 1000);
-  const minutes = Math.floor(diff / 60000);
-  const hours = Math.floor(diff / 3600000);
-  const days = Math.floor(diff / 86400000);
-  const weeks = Math.floor(diff / (86400000 * 7));
-  const months = Math.floor(diff / (86400000 * 30));
-  const years = Math.floor(diff / (86400000 * 365));
-
-  const abs = Math.abs;
-
-  if (abs(seconds) < 60) return rtf.format(Math.round(seconds), "second");
-  if (abs(minutes) < 60) return rtf.format(Math.round(minutes), "minute");
-  if (abs(hours) < 24) return rtf.format(Math.round(hours), "hour");
-  if (abs(days) < 7) return rtf.format(Math.round(days), "day");
-  if (abs(weeks) < 4) return rtf.format(Math.round(weeks), "week");
-  if (abs(months) < 12) return rtf.format(Math.round(months), "month");
-  return rtf.format(Math.round(years), "year");
+export function formatCurrency(value: number, options?: Intl.NumberFormatOptions) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+    ...options,
+  }).format(value);
 }
 
-// ======================
-// VALIDATION UTILITIES
-// ======================
-
 /**
- * Checks if a value is a valid date
- * @example isValidDate(new Date()) → true
+ * Generate a URL friendly slug.
  */
-export function isValidDate(date: unknown): date is Date {
-  return date instanceof Date && !isNaN(date.getTime());
+export function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
 }
 
-// ======================
-// TYPE GUARDS
-// ======================
-
-/**
- * Type guard for error objects
- * @example isError(error) → true
- */
-export function isError(error: unknown): error is Error {
-  return error instanceof Error;
-}
-
-// ======================
-// COMMON UTILITIES
-// ======================
-
-/**
- * Delays execution for a specified time
- * @example await sleep(1000) // waits 1 second
- */
-export function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+export function clamp(number: number, min: number, max: number) {
+  return Math.min(Math.max(number, min), max);
 }

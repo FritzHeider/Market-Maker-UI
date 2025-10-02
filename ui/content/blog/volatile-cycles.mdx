@@ -1,0 +1,22 @@
+---
+title: Liquidity strategy patterns for volatile cycles
+date: 2024-10-02
+author: Cleo Hart
+summary: Quantifying the trade-offs between passive and active liquidity in a macro regime defined by volatility spikes.
+---
+
+When volatility regimes shift, the spread between passive and active liquidity providers widens. The challenge for most desks is **reacting quickly enough without sacrificing discipline**.
+
+## Diagnose the regime shift
+
+Start by monitoring microstructure metrics – quote stability, queue priority, and realized volatility. When those indicators breach pre-defined guardrails, Market Maker can automatically trigger a review playbook. The review prompts the desk to revisit allocations, widen spreads, and rebalance inventory buffers.
+
+## Layer deterministic guardrails with adaptive levers
+
+Deterministic guardrails keep your downside capped: circuit breakers, kill switches, and fee-aware routing that prevents leakage. Adaptive levers introduce the nuance: dynamic inventory skew, fee pass-through models, and venue re-weighting. The key is **observability** – everyone should see the same telemetry and commentary in real time.
+
+> Pro tip: pair every guardrail with an owner. Accountability drives velocity without compromising safety.
+
+## Codify the win
+
+Once a playbook proves itself, promote it to your library. Market Maker notarizes the results so compliance stays happy and the team can redeploy confidently the next time volatility spikes.
