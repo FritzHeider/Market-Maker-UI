@@ -16,6 +16,7 @@ from src.modules.exchange_connector.auth import router as auth_router
 from src.modules.exchange_connector.secrets_manager import get_api_keys
 from src.modules.monetization.referral import router as referral_router
 from src.modules.compliance.kyc import router as kyc_router
+from src.modules.portfolio_management.portfolio_tracker import PortfolioTracker
 
 CLIENT_ID = os.getenv("OAUTH_CLIENT_ID", "")
 CLIENT_SECRET = os.getenv("OAUTH_CLIENT_SECRET", "")
@@ -42,6 +43,12 @@ app.include_router(kyc_router, prefix="/kyc")
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+portfolio_tracker = PortfolioTracker(
+    config_path="src/config/portfolio_config.yaml",
+    secrets_path="src/config/secrets.yaml",
+)
 
 
 class OrderPayload(BaseModel):
@@ -119,6 +126,16 @@ class Order(OrderPayload):
 orders: List[Order] = []
 
 
+def _flatten_total_balance(portfolio: dict) -> float:
+    total = 0.0
+    for exchange_balances in portfolio.values():
+        if isinstance(exchange_balances, dict):
+            for amount in exchange_balances.values():
+                if isinstance(amount, (int, float)):
+                    total += float(amount)
+    return total
+
+
 @app.get("/")
 def root():
     return {"message": "Trading Bot API Running"}
@@ -189,6 +206,42 @@ def list_orders(limit: int = 10):
     """
 
     return orders[-limit:]
+
+
+@app.get("/portfolio")
+def get_portfolio():
+    exchanges_config = getattr(portfolio_tracker, "secrets", {}).get("exchanges")
+    if not exchanges_config or not all(
+        credentials.get("api_key") and credentials.get("api_secret")
+        for credentials in exchanges_config.values()
+    ):
+        logger.error("API keys not found. Please authenticate via OAuth.")
+        raise HTTPException(
+            status_code=400,
+            detail="API keys not found. Please authenticate via OAuth.",
+        )
+
+    balances = portfolio_tracker.get_balances()
+    total_balance = _flatten_total_balance(balances)
+
+    pnl_value = 0.0
+    pnl_config = portfolio_tracker.config.get("portfolio_management", {})
+    pnl_settings = pnl_config.get("pnl_calculation", {})
+    initial_value = (
+        pnl_config.get("initial_portfolio_value")
+        or pnl_settings.get("initial_value")
+        or total_balance
+    )
+
+    if isinstance(pnl_settings, dict) and pnl_settings.get("enabled", False):
+        try:
+            pnl_result = portfolio_tracker.calculate_pnl(initial_value)
+            if isinstance(pnl_result, dict):
+                pnl_value = float(pnl_result.get("pnl", 0.0) or 0.0)
+        except Exception as exc:
+            logger.error(f"Error calculating portfolio PnL: {exc}")
+
+    return {"balance": total_balance, "pnl": pnl_value}
 
 
 @app.post("/orders")
